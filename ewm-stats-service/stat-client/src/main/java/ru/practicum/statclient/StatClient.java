@@ -1,6 +1,5 @@
 package ru.practicum.statclient;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -12,7 +11,6 @@ import ru.practicum.statdto.ViewStatsDto;
 
 import java.util.List;
 
-@Slf4j
 @Component
 public class StatClient {
 
@@ -25,16 +23,13 @@ public class StatClient {
     }
 
     public void addHit(EndpointHitDto endpointHitDto) {
-        log.trace("Sending endpointHitDto={} to stats-server.", endpointHitDto);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<EndpointHitDto> requestEntity = new HttpEntity<>(endpointHitDto, headers);
         restTemplate.postForEntity(statsServerUrl + "/hit", requestEntity, Void.class);
-        log.trace("EndpointHitDto sent to stats-server.");
     }
 
     public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean unique) {
-        log.trace("Requesting Stats from stats-server with params: start={}, end={}, uris={}, unique={}.", start, end, uris, unique);
         String url = UriComponentsBuilder.fromUriString(statsServerUrl)
                 .path("/stats")
                 .queryParam("start", start)
@@ -47,7 +42,7 @@ public class StatClient {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<ViewStatsDto>>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         return response.getBody();

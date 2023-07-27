@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   stats-server:
     build: ewm-stats-service/
@@ -8,16 +9,16 @@ services:
       - stats-db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats
-      SPRING_DATASOURCE_USERNAME: stats
-      SPRING_DATASOURCE_PASSWORD: stats
+      SPRING_DATASOURCE_USERNAME: my_stats_user
+      SPRING_DATASOURCE_PASSWORD: my_stats_password
 
   stats-db:
     image: postgres:15.3-alpine3.18
     ports:
       - "6541:5432"
     environment:
-      POSTGRES_USER: stats
-      POSTGRES_PASSWORD: stats
+      POSTGRES_USER: my_stats_user
+      POSTGRES_PASSWORD: my_stats_password
 
   ewm-service:
     build: main-service/
@@ -28,13 +29,13 @@ services:
       - stats-server
     environment:
       MAIN_SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/main
-      MAIN_SPRING_DATASOURCE_USERNAME: main
-      MAIN_SPRING_DATASOURCE_PASSWORD: main
+      MAIN_SPRING_DATASOURCE_USERNAME: my_main_user
+      MAIN_SPRING_DATASOURCE_PASSWORD: my_main_password
 
   ewm-db:
     image: postgres:15.3-alpine3.18
     ports:
       - "6543:5432"
     environment:
-      POSTGRES_USER: main
-      POSTGRES_PASSWORD: main
+      POSTGRES_USER: my_main_user
+      POSTGRES_PASSWORD: my_main_password
