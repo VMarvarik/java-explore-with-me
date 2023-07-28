@@ -14,7 +14,7 @@ public interface HitMapper {
     HitMapper INSTANCE = Mappers.getMapper(HitMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created", source = "timestamp")
+    @Mapping(target = "created", source = "timestamp", qualifiedByName = "stringToLocalDateTime")
     EndpointHit toHitModel(EndpointHitDto endpointHitDto);
 
     @Named("stringToLocalDateTime")
