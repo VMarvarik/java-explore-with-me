@@ -19,7 +19,6 @@ public class EndpointHit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
     private String app;
     private String uri;
     @NotBlank
