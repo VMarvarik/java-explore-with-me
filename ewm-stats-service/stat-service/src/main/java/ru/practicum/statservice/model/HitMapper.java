@@ -2,6 +2,9 @@ package ru.practicum.statservice.model;
 
 import ru.practicum.statdto.EndpointHitDto;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 //@Mapper(componentModel = "spring")
 //public interface HitMapper {
 //    HitMapper INSTANCE = Mappers.getMapper(HitMapper.class);
@@ -17,7 +20,7 @@ public class HitMapper {
                 .app(endpointHitDto.getApp())
                 .uri(endpointHitDto.getUri())
                 .ip(endpointHitDto.getIp())
-                .created(endpointHitDto.getTimestamp())
+                .created(LocalDateTime.parse(endpointHitDto.getTimestamp(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
     }
 }
