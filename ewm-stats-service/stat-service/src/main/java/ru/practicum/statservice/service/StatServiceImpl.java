@@ -18,13 +18,13 @@ import java.util.List;
 @Slf4j
 public class StatServiceImpl implements StatService {
     private final StatRepository repository;
-    private final HitMapper hitMapper;
+    //private final HitMapper hitMapper;
 
     @Transactional
     @Override
     public void addHit(EndpointHitDto hitDto) {
         log.trace("Сохранение хит: {}", hitDto);
-        repository.save(hitMapper.toHitModel(hitDto));
+        repository.save(HitMapper.toHitModel(hitDto));
     }
 
     @Override
