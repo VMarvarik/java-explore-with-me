@@ -21,7 +21,6 @@ public class EndpointHit {
     private Long id;
     @NotBlank
     private String app;
-    @NotBlank
     private String uri;
     @NotBlank
     private String ip;
