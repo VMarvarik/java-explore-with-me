@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.statdto.EndpointHitDto;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface HitMapper {
     HitMapper INSTANCE = Mappers.getMapper(HitMapper.class);
 
