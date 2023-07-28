@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.statdto.EndpointHitDto;
 import ru.practicum.statdto.ViewStatsDto;
+import ru.practicum.statservice.model.StatForRequest;
 import ru.practicum.statservice.service.StatService;
 
 import javax.validation.Valid;
@@ -25,7 +26,8 @@ public class StatController {
     }
 
     @GetMapping("/stats")
-    public List<ViewStatsDto> getStats(ru.practicum.statservice.model.StatForRequest params) {
+    @ResponseStatus(HttpStatus.OK)
+    public List<ViewStatsDto> getStats(StatForRequest params) {
         log.info("Выгружается статистика с параметрами: {}", params);
         return statService.getStats(params);
     }

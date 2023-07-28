@@ -16,11 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StatForRequest {
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public static final String DATA_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    @DateTimeFormat(pattern = DATA_FORMAT)
     @NotNull
     @PastOrPresent
     private LocalDateTime start;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = DATA_FORMAT)
     @NotNull
     @Future
     private LocalDateTime end;
