@@ -21,7 +21,6 @@ public class EndpointHit {
     private Long id;
     private String app;
     private String uri;
-    @NotBlank
     private String ip;
     @NotBlank
     private LocalDateTime created;
