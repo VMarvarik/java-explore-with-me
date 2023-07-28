@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,6 +21,5 @@ public class EndpointHit {
     private String app;
     private String uri;
     private String ip;
-    @NotBlank
     private LocalDateTime created;
 }

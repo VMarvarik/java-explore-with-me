@@ -19,7 +19,5 @@ public class EndpointHitDto {
     @NotBlank(message = "ip не может быть пустым или null")
     private String ip;
     @NotBlank(message = "timestamp не может быть пустым или null")
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    private LocalDateTime timestamp;
     private String timestamp;
 }
