@@ -1,25 +1,21 @@
 package ru.practicum.statdto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Builder
+@Getter
+@ToString
+@EqualsAndHashCode
 public class EndpointHitDto {
-    @NotBlank(message = "app не может быть пустым или null")
+    @NotBlank(message = "app is mandatory")
     private String app;
-    @NotBlank(message = "uri не может быть пустым или null")
+    @NotBlank(message = "uri is mandatory")
     private String uri;
-    @NotBlank(message = "ip не может быть пустым или null")
+    @NotBlank(message = "ip is mandatory")
     private String ip;
-    @NotBlank(message = "timestamp не может быть пустым или null")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotBlank(message = "timestamp is mandatory")
     private String timestamp;
 }
