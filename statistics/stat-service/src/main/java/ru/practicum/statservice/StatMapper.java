@@ -1,4 +1,4 @@
-package ru.practicum.statservice.model;
+package ru.practicum.statservice;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.statdto.EndpointHitDto;
