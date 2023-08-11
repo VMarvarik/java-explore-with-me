@@ -1,4 +1,4 @@
-package ru.practicum.statservice.utils;
+package ru.practicum.statservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

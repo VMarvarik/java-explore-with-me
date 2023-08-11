@@ -1,4 +1,4 @@
-package ru.practicum.statservice.utils;
+package ru.practicum.statservice.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
