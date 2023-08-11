@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class UtilityClass {
     private final RequestRepository requestRepository;
-    private final StatClient statClient;
+    private final StatClient statClient = new StatClient();
 
     private static final String START = "1970-01-01 00:00:00";
 

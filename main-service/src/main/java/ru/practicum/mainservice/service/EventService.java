@@ -7,13 +7,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.mainservice.dto.event.*;
+import ru.practicum.mainservice.dto.event.EventDto;
+import ru.practicum.mainservice.dto.event.EventShortDto;
+import ru.practicum.mainservice.dto.event.EventUpdateRequestDto;
+import ru.practicum.mainservice.dto.event.NewEventDto;
 import ru.practicum.mainservice.exception.DataException;
+import ru.practicum.mainservice.mapper.EventMapper;
+import ru.practicum.mainservice.mapper.LocationMapper;
 import ru.practicum.mainservice.model.*;
 import ru.practicum.mainservice.model.enums.EventState;
 import ru.practicum.mainservice.model.enums.RequestStatus;
-import ru.practicum.mainservice.mapper.EventMapper;
-import ru.practicum.mainservice.mapper.LocationMapper;
 import ru.practicum.mainservice.model.enums.StateAction;
 import ru.practicum.mainservice.repository.*;
 import ru.practicum.statclient.StatClient;
@@ -40,7 +43,7 @@ public class EventService {
     private final RequestRepository requestRepository;
     private final LocationRepository locationRepository;
     private final UtilityClass utilityClass;
-    private final StatClient statClient;
+    private final StatClient statClient = new StatClient();
 
     private static final String START = "1970-01-01 00:00:00";
     private static final String APP = "ewm-main-service";
