@@ -1,4 +1,4 @@
-package ru.practicum.statservice.utils;
+package ru.practicum.statservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -22,9 +22,6 @@ public class ErrorHandler {
         List<String> fieldErrorsMessage = e.getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-
-        log.warn("Error when creating object: {}.\n Details: {}", fieldErrorsMessage, exceptionMessage);
-
         return Map.of("error", fieldErrorsMessage.toString());
     }
 

@@ -4,7 +4,5 @@ CREATE TABLE IF NOT EXISTS hit (
     ip varchar(45) NOT NULL,
     uri varchar(127) NOT NULL,
     created timestamp NOT NULL,
-    CONSTRAINT pk_hit PRIMARY KEY (
-        id
-     )
-);
+    CONSTRAINT pk_hit PRIMARY KEY (id)
+    );
