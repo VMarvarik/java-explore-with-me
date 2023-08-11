@@ -1,41 +1,32 @@
 package ru.practicum.statservice.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class StatForRequest {
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public static final String DATA_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    @DateTimeFormat(pattern = DATA_FORMAT)
+    @NotNull
+    @FutureOrPresent
     private LocalDateTime start;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = DATA_FORMAT)
+    @NotNull
+    @Future
     private LocalDateTime end;
     private List<String> uris = new ArrayList<>();
+    @NotNull
     private Boolean unique = false;
-
-    public StatForRequest(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("Dates of start and end of period must be specified");
-        }
-        if (start.isAfter(end)) {
-            throw new IllegalArgumentException("Start date must be before end date");
-        }
-        this.start = start;
-        this.end = end;
-        if (uris != null) {
-            this.uris = uris;
-        }
-        if (unique != null) {
-            this.unique = unique;
-        }
-    }
 }
