@@ -33,13 +33,13 @@ public class StatServiceImpl implements StatService {
         LocalDateTime start = params.getStart();
         LocalDateTime end = params.getEnd();
         if (params.getUnique()) {
-            if (uris.isEmpty()) {
+            if (uris == null || uris.isEmpty()) {
                 return repository.getAllStatsByDistinctIp(start, end);
             } else {
                 return repository.getAllStatsInUrisByDistinctIp(uris, start, end);
             }
         } else {
-            if (uris.isEmpty()) {
+            if (uris == null || uris.isEmpty()) {
                 return repository.getAllStats(start, end);
             } else {
                 return repository.getAllStatsInUris(uris, start, end);
