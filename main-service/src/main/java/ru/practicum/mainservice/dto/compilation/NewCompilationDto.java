@@ -1,7 +1,8 @@
 package ru.practicum.mainservice.dto.compilation;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
@@ -10,12 +11,13 @@ import java.util.Set;
 
 
 @AllArgsConstructor
-@Getter
+@Data
 @ToString
+@Builder
 public class NewCompilationDto {
     private boolean pinned;
-    @NotBlank(message = "Compilation title can't be empty")
-    @Length(max = 50, message = "Compilation title can't be longer than 50 characters")
+    @NotBlank(message = "Название не может быть пустым")
+    @Length(max = 50, message = "Название не может быть длинее 50 символов")
     private final String title;
     private final Set<Long> events;
 }

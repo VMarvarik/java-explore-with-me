@@ -9,6 +9,7 @@ import ru.practicum.statservice.model.HitMapper;
 import ru.practicum.statservice.model.StatForRequest;
 import ru.practicum.statservice.repository.StatRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,10 +19,11 @@ import java.util.List;
 public class StatServiceImpl implements StatService {
     private final StatRepository repository;
 
+    @Transactional
     @Override
-    public void addHit(EndpointHitDto endpointHitDto) {
-        log.trace("Saving endpoint hit to db: {}", endpointHitDto);
-        repository.save(HitMapper.toEndpointHitEntity(endpointHitDto));
+    public void addHit(EndpointHitDto hitDto) {
+        log.trace("Сохранение хит: {}", hitDto);
+        repository.save(HitMapper.toHitModel(hitDto));
     }
 
     @Override
@@ -30,25 +32,21 @@ public class StatServiceImpl implements StatService {
         LocalDateTime start = params.getStart();
         LocalDateTime end = params.getEnd();
         if (start == null || end == null) {
-            throw new IllegalArgumentException("Dates of start and end of period must be specified");
+            throw new IllegalArgumentException();
         }
         if (start.isAfter(end)) {
-            throw new IllegalArgumentException("Start date must be before end date");
+            throw new IllegalArgumentException();
         }
         if (params.getUnique()) {
             if (uris == null || uris.isEmpty()) {
-                log.debug("Getting all stats by unique ip from {} to {}", start, end);
                 return repository.getAllStatsByDistinctIp(start, end);
             } else {
-                log.debug("Getting all stats by unique ip from {} to {} in uris {}", start, end, uris);
                 return repository.getAllStatsInUrisByDistinctIp(uris, start, end);
             }
         } else {
             if (uris == null || uris.isEmpty()) {
-                log.debug("Getting all stats from {} to {}", start, end);
                 return repository.getAllStats(start, end);
             } else {
-                log.debug("Getting all stats from {} to {} in uris {}", start, end, uris);
                 return repository.getAllStatsInUris(uris, start, end);
             }
         }

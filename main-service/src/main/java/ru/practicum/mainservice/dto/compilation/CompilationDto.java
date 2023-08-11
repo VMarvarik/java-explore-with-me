@@ -1,13 +1,13 @@
 package ru.practicum.mainservice.dto.compilation;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import ru.practicum.mainservice.dto.event.EventShortDto;
 
 import java.util.List;
 
 @AllArgsConstructor
-@Getter
+@Data
 public class CompilationDto {
     private final Long id;
     private final Boolean pinned;

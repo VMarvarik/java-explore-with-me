@@ -8,8 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 public class HitMapper {
-    public static EndpointHit toEndpointHitEntity(EndpointHitDto endpointHitDto) {
-        log.trace("Converting EndpointHitDto({}) to EndpointHitEntity", endpointHitDto);
+    public static EndpointHit toHitModel(EndpointHitDto endpointHitDto) {
         return new EndpointHit(
                 null,
                 endpointHitDto.getApp(),
