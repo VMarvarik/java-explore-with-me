@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.statdto.EndpointHitDto;
 import ru.practicum.statdto.ViewStatsDto;
+import ru.practicum.statservice.model.StatForRequest;
 import ru.practicum.statservice.model.StatMapper;
-import ru.practicum.statservice.model.StatRequestParams;
 import ru.practicum.statservice.repository.StatRepository;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ public class StatServiceImpl implements StatService {
     }
 
     @Override
-    public List<ViewStatsDto> getStats(StatRequestParams params) {
+    public List<ViewStatsDto> getStats(StatForRequest params) {
         List<String> uris = params.getUris();
         LocalDateTime start = params.getStart();
         LocalDateTime end = params.getEnd();
