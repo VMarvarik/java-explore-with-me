@@ -1,14 +1,13 @@
-package ru.practicum.mainservice.model;
+package ru.practicum.mainservice.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
+@Setter
 @Entity
 @Table(name = "location", schema = "public")
 public class Location {

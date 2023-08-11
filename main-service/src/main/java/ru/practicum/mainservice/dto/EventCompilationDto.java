@@ -1,11 +1,10 @@
-package ru.practicum.mainservice.dto.event;
+package ru.practicum.mainservice.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
-@Data
-@ToString
-@Builder
+@Getter
 public class EventCompilationDto {
     private final Long eventId;
     private final Long compilationId;

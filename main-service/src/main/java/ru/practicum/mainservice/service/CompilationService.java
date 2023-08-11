@@ -1,6 +1,5 @@
 package ru.practicum.mainservice.service;
 
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -8,18 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mainservice.dto.compilation.CompilationDto;
 import ru.practicum.mainservice.dto.compilation.NewCompilationDto;
-import ru.practicum.mainservice.dto.compilation.CompilationUpdateDto;
+import ru.practicum.mainservice.dto.compilation.UpdateCompilationDto;
 import ru.practicum.mainservice.dto.event.EventShortDto;
-import ru.practicum.mainservice.model.Compilation;
-import ru.practicum.mainservice.model.Event;
+import ru.practicum.mainservice.entity.Compilation;
+import ru.practicum.mainservice.entity.Event;
 import ru.practicum.mainservice.mapper.CompilationMapper;
 import ru.practicum.mainservice.repository.CompilationRepository;
 import ru.practicum.mainservice.repository.EventRepository;
+import ru.practicum.mainservice.util.PageParams;
+
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static ru.practicum.mainservice.service.UtilityClass.COMPILATION_NOT_FOUND;
 
 @AllArgsConstructor
 @Slf4j
@@ -27,71 +26,102 @@ import static ru.practicum.mainservice.service.UtilityClass.COMPILATION_NOT_FOUN
 public class CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
-    private final UtilityClass utilityClass;
+    private final ServiceUtility serviceUtility;
 
     @Transactional
-    public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
+    public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Set<Long> eventsIds = newCompilationDto.getEvents();
-        Compilation compilation = CompilationMapper.INSTANCE.toModel(newCompilationDto);
+        log.info("Mapping new compilation DTO={} to Compilation entity", newCompilationDto);
+        Compilation compilation = CompilationMapper.INSTANCE.toEntity(newCompilationDto);
         if (eventsIds != null) {
-            List<Event> events  = eventRepository.findAllById(eventsIds);
+            log.info("Getting all events by ids {}", eventsIds);
+            List<Event> events = eventRepository.findAllById(eventsIds);
+            log.info("Setting events to Compilation");
             compilation.setEvents(new HashSet<>(events));
         }
+        log.info("Saving compilation={} to DB", compilation);
         Compilation savedCompilation = compilationRepository.save(compilation);
-        List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(savedCompilation.getEvents());
+        log.info("Compilation saved to DB. Starting making DTO");
+        List<EventShortDto> eventsDto = serviceUtility.makeEventShortDtos(savedCompilation.getEvents());
+        log.info("Making compilation dto");
         return CompilationMapper.INSTANCE.toDto(savedCompilation, eventsDto);
     }
 
     @Transactional
     public void deleteCompilation(Long compId) {
         if (!compilationRepository.existsById(compId)) {
-            throw new EntityNotFoundException(COMPILATION_NOT_FOUND);
+            log.warn("Compilation with id={} not found", compId);
+            throw new EntityNotFoundException(String.format("Compilation with id=%s not found", compId));
         }
+        log.info("Deleting compilation with id={} from DB", compId);
         compilationRepository.deleteById(compId);
     }
 
     @Transactional
-    public CompilationDto updateCompilation(Long compId, CompilationUpdateDto compilationUpdateDto) {
+    public CompilationDto updateCompilation(Long compId, UpdateCompilationDto updateCompilationDto) {
+        log.info("Getting compilation with id={} from DB", compId);
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(
-                () -> new EntityNotFoundException(COMPILATION_NOT_FOUND)
+                () -> {
+                    log.warn("Compilation not found");
+                    return new EntityNotFoundException("Compilation not found");
+                }
         );
-        Set<Long> eventsIds = compilationUpdateDto.getEvents();
+        Set<Long> eventsIds = updateCompilationDto.getEvents();
         if (eventsIds != null) {
-            List<Event> events  = eventRepository.findAllById(eventsIds);
+            log.info("Getting events by ids {} for compilation update", eventsIds);
+            List<Event> events = eventRepository.findAllById(eventsIds);
+            log.info("Setting events to Compilation");
             compilation.setEvents(new HashSet<>(events));
         }
-        compilation = CompilationMapper.INSTANCE.forUpdate(compilationUpdateDto, compilation);
+        log.info("Updating compilation={} with updateCompilationDto={} and saving to DB", compilation, updateCompilationDto);
+        compilation = CompilationMapper.INSTANCE.partialUpdate(updateCompilationDto, compilation);
+
+        log.info("Saving updated compilation={} to DB", compilation);
         compilation = compilationRepository.save(compilation);
-        List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(compilation.getEvents());
+        log.info("Compilation saved to DB. Starting making DTO");
+        List<EventShortDto> eventsDto = serviceUtility.makeEventShortDtos(compilation.getEvents());
+        log.info("Making compilation dto");
         return CompilationMapper.INSTANCE.toDto(compilation, eventsDto);
     }
 
     @Transactional(readOnly = true)
     public CompilationDto getCompilationById(Long compId) {
+        log.info("Getting compilation with id={} from DB", compId);
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(
-                () -> new EntityNotFoundException(COMPILATION_NOT_FOUND)
+                () -> {
+                    log.warn("Compilation not found");
+                    return new EntityNotFoundException("Compilation not found");
+                }
         );
-        List<EventShortDto> eventsDto = utilityClass.makeEventShortDto(compilation.getEvents());
+        log.info("Compilation got. Starting making DTO");
+        List<EventShortDto> eventsDto = serviceUtility.makeEventShortDtos(compilation.getEvents());
+        log.info("Making compilation dto");
         return CompilationMapper.INSTANCE.toDto(compilation, eventsDto);
     }
 
     @Transactional(readOnly = true)
-    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+    public List<CompilationDto> getCompilations(Boolean pinned, PageParams pageParams) {
         List<Compilation> compilations;
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = pageParams.makePageRequest();
         if (pinned != null) {
+            log.info("Getting compilations by pinned={}, page params={}", pinned, pageParams);
             compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
         } else {
+            log.info("Getting compilations with page params={}", pageParams);
             compilations = compilationRepository.findAll(pageRequest).getContent();
         }
 
         if (compilations.isEmpty()) {
+            log.info("Compilations not found");
             return new ArrayList<>();
         }
+        log.info("Compilations found. Collecting unique events");
         Set<Event> events = compilations.stream()
                 .flatMap(compilation -> compilation.getEvents().stream())
                 .collect(Collectors.toSet());
-        List<EventShortDto> eventsDtoList = utilityClass.makeEventShortDto(events);
+        List<EventShortDto> eventsDtoList = serviceUtility.makeEventShortDtos(events);
+
+        log.info("Mapping events to map of event id - event short dto");
         Map<Long, EventShortDto> eventDtosMap = new HashMap<>();
         for (EventShortDto eventShortDto : eventsDtoList) {
             eventDtosMap.put(
@@ -99,6 +129,8 @@ public class CompilationService {
                     eventShortDto
             );
         }
+
+        log.info("Mapping compilations to map of compilation id - list of event short dto");
         Map<Long, List<EventShortDto>> eventsDtoMapByCompilationId = compilations.stream()
                 .collect(Collectors.toMap(Compilation::getId, compilation -> {
                     Set<Event> eventsSet = compilation.getEvents();
@@ -106,6 +138,8 @@ public class CompilationService {
                             .map(event -> eventDtosMap.get(event.getId()))
                             .collect(Collectors.toList());
                 }));
+
+        log.info("Mapping compilations to list of compilation dto");
         return compilations.stream()
                 .map(compilation -> {
                     Long compilationId = compilation.getId();

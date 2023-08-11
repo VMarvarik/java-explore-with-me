@@ -1,8 +1,8 @@
-package ru.practicum.mainservice.model;
+package ru.practicum.mainservice.entity;
 
-
-import lombok.*;
-import ru.practicum.mainservice.model.enums.EventState;
+import lombok.Getter;
+import lombok.Setter;
+import ru.practicum.mainservice.enums.EventState;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,10 +10,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
+@Setter
 @Entity
 @Table(name = "event")
 public class Event {

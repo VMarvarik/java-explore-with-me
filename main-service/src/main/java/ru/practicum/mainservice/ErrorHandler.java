@@ -1,4 +1,4 @@
-package ru.practicum.mainservice.exception;
+package ru.practicum.mainservice;
 
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.mainservice.exception.DataConflictException;
+import ru.practicum.mainservice.util.TimeManipulator;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -16,19 +18,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.practicum.mainservice.service.UtilityClass.formatTimeToString;
-
 @RestControllerAdvice(basePackages = "ru.practicum.mainservice")
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> ifEntityNotFoundException(final EntityNotFoundException e) {
-        return createErrorMessage(e, HttpStatus.NOT_FOUND, "The required object was not found.");
+    public Map<String, String> handleEntityNotFoundException(final EntityNotFoundException e) {
+        return makeMessage(e, HttpStatus.NOT_FOUND, "The required object was not found.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> ifValidationException(final MethodArgumentNotValidException e) {
+    public Map<String, String> handleValidationException(final MethodArgumentNotValidException e) {
         String exceptionMessage = e.getMessage();
         List<String> fieldErrorsMessage = e.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
@@ -37,41 +37,41 @@ public class ErrorHandler {
         return Map.of("status", "BAD_REQUEST",
                 "reason", "Incorrectly made request.",
                 "message", fieldErrorsMessage.toString(),
-                "timestamp", formatTimeToString(LocalDateTime.now())
+                "timestamp", TimeManipulator.formatTimeToString(LocalDateTime.now())
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> ifTypeMismatchException(final TypeMismatchException e) {
-        return createErrorMessage(e, HttpStatus.BAD_REQUEST, "Incorrectly made request.");
+    public Map<String, String> handleTypeMismatchException(final TypeMismatchException e) {
+        return makeMessage(e, HttpStatus.BAD_REQUEST, "Incorrectly made request.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> ifIllegalArgumentException(final IllegalArgumentException e) {
-        return createErrorMessage(e, HttpStatus.BAD_REQUEST, "Incorrectly made request.");
+    public Map<String, String> handleIllegalArgumentException(final IllegalArgumentException e) {
+        return makeMessage(e, HttpStatus.BAD_REQUEST, "Incorrectly made request.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> ifDataIntegrityViolationException(final DataIntegrityViolationException e) {
-        return createErrorMessage(e, HttpStatus.CONFLICT, "The object already exists.");
+    public Map<String, String> handleDataIntegrityViolationException(final DataIntegrityViolationException e) {
+        return makeMessage(e, HttpStatus.CONFLICT, "The object already exists.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> ifDataException(final DataException e) {
-        return createErrorMessage(e, HttpStatus.CONFLICT, e.getMessage());
+    public Map<String, String> handleCode409Exception(final DataConflictException e) {
+        return makeMessage(e, HttpStatus.CONFLICT, e.getMessage());
     }
 
-    private Map<String, String> createErrorMessage(Exception e, HttpStatus status, String reason) {
+    private Map<String, String> makeMessage(Exception e, HttpStatus status, String reason) {
         Optional<String> messageOptional = Optional.ofNullable(e.getMessage());
         String message = messageOptional.orElse("-");
         return Map.of("status", status.toString(),
                 "reason", reason,
                 "message", message,
-                "timestamp", formatTimeToString(LocalDateTime.now())
+                "timestamp", TimeManipulator.formatTimeToString(LocalDateTime.now())
         );
     }
 }

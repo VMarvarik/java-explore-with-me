@@ -4,9 +4,9 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.mainservice.dto.compilation.CompilationDto;
 import ru.practicum.mainservice.dto.compilation.NewCompilationDto;
-import ru.practicum.mainservice.dto.compilation.CompilationUpdateDto;
+import ru.practicum.mainservice.dto.compilation.UpdateCompilationDto;
 import ru.practicum.mainservice.dto.event.EventShortDto;
-import ru.practicum.mainservice.model.Compilation;
+import ru.practicum.mainservice.entity.Compilation;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface CompilationMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "events", ignore = true)
-    Compilation toModel(NewCompilationDto newCompilationDto);
+    Compilation toEntity(NewCompilationDto newCompilationDto);
 
     @Mapping(target = "events", source = "events")
     CompilationDto toDto(Compilation compilation, List<EventShortDto> events);
@@ -24,5 +24,5 @@ public interface CompilationMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "events", ignore = true)
-    Compilation forUpdate(CompilationUpdateDto updateCompilationDto, @MappingTarget Compilation compilation);
+    Compilation partialUpdate(UpdateCompilationDto updateCompilationDto, @MappingTarget Compilation compilation);
 }

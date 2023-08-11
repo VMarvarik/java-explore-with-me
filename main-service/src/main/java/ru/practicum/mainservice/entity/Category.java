@@ -1,17 +1,18 @@
-package ru.practicum.mainservice.model;
+package ru.practicum.mainservice.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Getter
+@Setter
+@ToString
 @Entity
-@Table(name = "user_")
-public class User {
+@Table(name = "category", schema = "public")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -20,8 +21,4 @@ public class User {
     @NotNull
     @Column(name = "name")
     private String name;
-
-    @NotNull
-    @Column(name = "email", unique = true)
-    private String email;
 }

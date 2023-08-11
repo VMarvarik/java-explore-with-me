@@ -6,39 +6,32 @@ import org.hibernate.validator.constraints.Length;
 import ru.practicum.mainservice.dto.LocationDto;
 
 import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * DTO for creating new {@link ru.practicum.mainservice.entity.Event} in DB
+ * DTO for updating existing {@link ru.practicum.mainservice.entity.Event} in DB
  */
 @AllArgsConstructor
 @Getter
-public class NewEventDto {
+public class UpdateEventUserRequestDto {
     @Length(message = "Annotation should be between 20 and 2000 chars", min = 20, max = 2000)
-    @NotBlank(message = "Annotation should not be blank")
     private final String annotation;
-
-    @NotNull(message = "Category should not be null")
     private final Long category;
-
     @Length(message = "Description should be between 20 and 7000 chars", min = 20, max = 7000)
-    @NotBlank(message = "Description should not be blank")
     private final String description;
-
-    @NotNull(message = "Event date should not be null")
-    @Future(message = "Event date can't be in past")
+    @Future(message = "Event date should be in the future")
     private final LocalDateTime eventDate;
-
-    @NotNull(message = "Location should not be null")
+    private final Long initiator;
     private final LocationDto location;
-
-    private final Boolean paid = false;
-    private final Integer participantLimit = 0;
-    private final Boolean requestModeration = true;
-
+    private final Boolean paid;
+    private final Integer participantLimit;
+    private final Boolean requestModeration;
+    private final StateInUserUpd stateAction;
     @Length(message = "Title should be between 3 and 120 chars", min = 3, max = 120)
-    @NotBlank(message = "Title should not be blank")
     private final String title;
+
+    public enum StateInUserUpd {
+        SEND_TO_REVIEW,
+        CANCEL_REVIEW
+    }
 }
