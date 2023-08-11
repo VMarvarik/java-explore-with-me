@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateRequestDto;
 import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateResponseDto;
 import ru.practicum.mainservice.dto.request.RequestDto;
@@ -69,9 +68,7 @@ public class RequestService {
 
     @Transactional
     public RequestDto cancelRequest(Long userId, Long requestId) {
-        Request request = requestRepository.findById(requestId).orElseThrow(
-                () -> new EntityNotFoundException(REQUEST_NOT_FOUND)
-        );
+        Request request = requestRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException(REQUEST_NOT_FOUND));
         if (request.getRequester().getId().equals(userId)) {
             request.setStatus(RequestStatus.CANCELED);
             return RequestMapper.INSTANCE.toDto(requestRepository.save(request));
@@ -144,7 +141,7 @@ public class RequestService {
                     request.setStatus(RequestStatus.REJECTED);
                 }
             } else {
-                throw new DataException("Запрос и событие не совпадают" );
+                throw new DataException("Запрос и событие не совпадают");
             }
         }
         requestRepository.saveAll(requests);
