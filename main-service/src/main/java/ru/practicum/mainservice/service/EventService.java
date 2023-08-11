@@ -185,7 +185,7 @@ public class EventService {
                 APP,
                 uri,
                 ip,
-                LocalDateTime.now()
+                formatTimeToString(LocalDateTime.now())
         ));
         Long views = getViewsForOneEvent(eventId);
         return EventMapper.INSTANCE.toDto(event, confirmedRequests, views);
@@ -209,7 +209,7 @@ public class EventService {
                 APP,
                 uri,
                 ip,
-                LocalDateTime.now()
+                formatTimeToString(LocalDateTime.now())
         ));
         if (start == null) {
             start = LocalDateTime.now();
