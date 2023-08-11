@@ -8,9 +8,9 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 public class StatMapper {
-    public static EndpointHitEntity toEndpointHitEntity(EndpointHitDto endpointHitDto) {
+    public static EndpointHit toEndpointHitEntity(EndpointHitDto endpointHitDto) {
         log.trace("Converting EndpointHitDto({}) to EndpointHitEntity", endpointHitDto);
-        return new EndpointHitEntity(
+        return new EndpointHit(
                 null,
                 endpointHitDto.getApp(),
                 endpointHitDto.getUri(),

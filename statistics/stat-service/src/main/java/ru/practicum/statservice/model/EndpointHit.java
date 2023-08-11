@@ -1,7 +1,8 @@
 package ru.practicum.statservice.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,8 +12,9 @@ import java.time.LocalDateTime;
 @Table(name = "hit")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-public class EndpointHitEntity {
+@Data
+@Builder
+public class EndpointHit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
