@@ -17,12 +17,11 @@ import java.util.List;
 @Slf4j
 public class StatServiceImpl implements StatService {
     private final StatRepository repository;
-    private final HitMapper hitMapper;
 
     @Override
     public void addHit(EndpointHitDto endpointHitDto) {
         log.trace("Saving endpoint hit to db: {}", endpointHitDto);
-        repository.save(hitMapper.toHitModel(endpointHitDto));
+        repository.save(HitMapper.toEndpointHitEntity(endpointHitDto));
     }
 
     @Override
