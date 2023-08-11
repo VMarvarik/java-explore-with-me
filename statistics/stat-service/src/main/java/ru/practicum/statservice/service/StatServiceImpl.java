@@ -32,10 +32,10 @@ public class StatServiceImpl implements StatService {
         LocalDateTime start = params.getStart();
         LocalDateTime end = params.getEnd();
         if (start == null || end == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Dates of start and end of period must be specified");
         }
         if (start.isAfter(end)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Start date must be before end date");
         }
         if (params.getUnique()) {
             if (uris == null || uris.isEmpty()) {
