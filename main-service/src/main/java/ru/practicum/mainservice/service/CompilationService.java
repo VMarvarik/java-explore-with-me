@@ -99,14 +99,12 @@ public class CompilationService {
     }
 
     @Transactional(readOnly = true)
-    public List<CompilationDto> getCompilations(Boolean pinned, PageParams pageParams) {
+    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         List<Compilation> compilations;
-        PageRequest pageRequest = pageParams.makePageRequest();
+        PageRequest pageRequest = PageRequest.of(from / size, size);
         if (pinned != null) {
-            log.info("Getting compilations by pinned={}, page params={}", pinned, pageParams);
             compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
         } else {
-            log.info("Getting compilations with page params={}", pageParams);
             compilations = compilationRepository.findAll(pageRequest).getContent();
         }
 

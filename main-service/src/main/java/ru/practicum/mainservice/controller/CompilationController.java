@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainservice.dto.compilation.CompilationDto;
 import ru.practicum.mainservice.service.CompilationService;
-import ru.practicum.mainservice.service.PageParams;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,10 +20,10 @@ public class CompilationController {
     @GetMapping
     public List<CompilationDto> getCompilations(
             @RequestParam(required = false) Boolean pinned,
-            PageParams pageParams
+            @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
-        log.info("Get compilations with pinned={}, pageParams={}", pinned, pageParams);
-        return compilationService.getCompilations(pinned, pageParams);
+        return compilationService.getCompilations(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
