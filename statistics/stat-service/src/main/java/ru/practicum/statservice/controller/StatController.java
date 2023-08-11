@@ -1,4 +1,4 @@
-package ru.practicum.statservice;
+package ru.practicum.statservice.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.statdto.EndpointHitDto;
 import ru.practicum.statdto.ViewStatsDto;
+import ru.practicum.statservice.model.StatRequestParams;
 import ru.practicum.statservice.service.StatService;
-import ru.practicum.statservice.utils.StatRequestParams;
 
 import javax.validation.Valid;
 import java.util.List;
