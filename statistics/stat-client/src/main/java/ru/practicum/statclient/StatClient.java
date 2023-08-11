@@ -19,7 +19,6 @@ public class StatClient {
             .build();
 
     public void addHit(EndpointHitDto endpointHitDto) {
-        log.trace("Sending endpointHitDto={} to stats-server.", endpointHitDto);
         webClient
                 .post()
                 .uri("/hit")
@@ -27,7 +26,6 @@ public class StatClient {
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
-        log.trace("EndpointHitDto sent to stats-server.");
     }
 
     public List<ViewStatsDto> getStats(String start, String end, List<String> uris, boolean unique) {
@@ -35,7 +33,6 @@ public class StatClient {
         for (String uri : uris) {
             urisToSend.append(uri).append(",");
         }
-        log.trace("Requesting Stats from stats-server with params: start={}, end={}, uris={}, unique={}.", start, end, uris, unique);
         return webClient
                 .get()
                 .uri(builder -> builder
