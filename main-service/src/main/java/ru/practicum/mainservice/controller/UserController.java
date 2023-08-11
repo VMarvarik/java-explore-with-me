@@ -4,20 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.mainservice.dto.event.EventFullDto;
+import ru.practicum.mainservice.dto.event.EventDto;
 import ru.practicum.mainservice.dto.event.EventShortDto;
+import ru.practicum.mainservice.dto.event.EventUpdateRequestDto;
 import ru.practicum.mainservice.dto.event.NewEventDto;
-import ru.practicum.mainservice.dto.event.UpdateEventUserRequestDto;
 import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateRequestDto;
-import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateResultDto;
-import ru.practicum.mainservice.dto.request.ParticipationRequestDto;
-import ru.practicum.mainservice.enums.RequestStatus;
-import ru.practicum.mainservice.exception.DataConflictException;
+import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateResponseDto;
+import ru.practicum.mainservice.dto.request.RequestDto;
+import ru.practicum.mainservice.exception.DataException;
+import ru.practicum.mainservice.model.enums.RequestStatus;
 import ru.practicum.mainservice.service.EventService;
 import ru.practicum.mainservice.service.RequestService;
-import ru.practicum.mainservice.util.PageParams;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,42 +32,46 @@ public class UserController {
 
     @PostMapping("/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto createRequest(
+    public RequestDto addRequest(
             @PathVariable("userId") final Long userId,
             @RequestParam("eventId") final Long eventId
     ) {
-        log.info("Create request for eventId: {}, userId: {}", eventId, userId);
-        return requestService.createRequest(userId, eventId);
+        log.info("Создание запроса с eventId: {}, с userId: {}", eventId, userId);
+        return requestService.addRequest(userId, eventId);
     }
 
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
-    public ParticipationRequestDto cancelRequest(
+    @ResponseStatus(HttpStatus.OK)
+    public RequestDto cancelRequest(
             @PathVariable("userId") final Long userId,
             @PathVariable("requestId") final Long requestId
     ) {
-        log.info("Cancel request for requestId: {}, userId: {}", requestId, userId);
-        return requestService.cancelOwnRequest(userId, requestId);
+        log.info("Отмена запроса с requestId: {}, с userId: {}", requestId, userId);
+        return requestService.cancelRequest(userId, requestId);
     }
 
     @GetMapping("/{userId}/requests")
-    public List<ParticipationRequestDto> getAllUserRequests(
+    @ResponseStatus(HttpStatus.OK)
+    public List<RequestDto> getAllUserRequests(
             @PathVariable("userId") final Long userId
     ) {
-        log.info("Get all requests for userId: {}", userId);
+        log.info("Вызов всех запросов для userId: {}", userId);
         return requestService.getAllUserRequests(userId);
     }
 
     @GetMapping("/{userId}/events/{eventId}/requests")
-    public List<ParticipationRequestDto> getAllUserEventRequests(
+    @ResponseStatus(HttpStatus.OK)
+    public List<RequestDto> getAllUserEventRequests(
             @PathVariable("userId") final Long userId,
             @PathVariable("eventId") final Long eventId
     ) {
-        log.info("Get all requests for eventId: {} by userId: {}", eventId, userId);
+        log.info("Вызов всех запросов с eventId: {} с userId: {}", eventId, userId);
         return requestService.getAllUserEventRequests(eventId, userId);
     }
 
     @PatchMapping("/{userId}/events/{eventId}/requests")
-    public EventRequestStatusUpdateResultDto updateRequestsStatus(
+    @ResponseStatus(HttpStatus.OK)
+    public EventRequestStatusUpdateResponseDto updateRequestsStatus(
             @Valid
             @RequestBody
             EventRequestStatusUpdateRequestDto updater,
@@ -75,17 +80,16 @@ public class UserController {
     ) {
         RequestStatus status = updater.getStatus();
         if (status == RequestStatus.CONFIRMED || status == RequestStatus.REJECTED) {
-            log.info("Update eventId: {}, userId: {}", eventId, userId);
+            log.info("Обновление события с eventId: {}, для userId: {}", eventId, userId);
             return requestService.updateRequestsStatus(updater, eventId, userId);
         } else {
-            log.warn("Update eventId: {}, userId: {}, status: {}", eventId, userId, status);
-            throw new IllegalArgumentException("Only status CONFIRMED and REJECTED are allowed");
+            throw new IllegalArgumentException("Доступны только статусы CONFIRMED или REJECTED");
         }
     }
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto createEvent(
+    public EventDto addEvent(
             @PathVariable("userId") final Long userId,
             @Valid
             @RequestBody
@@ -94,47 +98,48 @@ public class UserController {
         LocalDateTime eventDate = eventDto.getEventDate();
         LocalDateTime timeCriteria = LocalDateTime.now().plusHours(2L);
         if (eventDate.isBefore(timeCriteria)) {
-            log.warn("Creating event by userId: {} fault", userId);
-            throw new DataConflictException("Event date must be at least 2 hours from now");
+            throw new DataException("Время события не может таким ранним");
         }
-        log.info("Creating event by userId: {}", userId);
+        log.info("Создание события пользователем с userId: {}", userId);
         return eventService.createEvent(userId, eventDto);
     }
 
     @PatchMapping("/{userId}/events/{eventId}")
-    public EventFullDto updateEvent(
+    @ResponseStatus(HttpStatus.OK)
+    public EventDto addEvent(
             @PathVariable("userId") final Long userId,
             @PathVariable("eventId") final Long eventId,
             @Valid
             @RequestBody
-            UpdateEventUserRequestDto eventDto
+            EventUpdateRequestDto eventDto
     ) {
         LocalDateTime eventDate = eventDto.getEventDate();
         LocalDateTime timeCriteria = LocalDateTime.now().plusHours(2L);
         if (eventDate != null && eventDate.isBefore(timeCriteria)) {
-            log.warn("Updating event by userId: {} fault", userId);
-            throw new DataConflictException("Event date must be at least 2 hours from now");
+            throw new DataException("Время события не может таким ранним");
         }
-        log.info("Updating event by userId: {}", userId);
+        log.info("Обновление события пользователем с userId: {}", userId);
         return eventService.updateEventByUser(eventDto, eventId, userId);
     }
 
     @GetMapping("/{userId}/events/{eventId}")
-    public EventFullDto getEventByIdByInitiator(
+    @ResponseStatus(HttpStatus.OK)
+    public EventDto getEventByIdByInitiator(
             @PathVariable("userId") final Long userId,
             @PathVariable("eventId") final Long eventId
     ) {
-        log.info("Get event info by userId: {}, eventId: {}", userId, eventId);
+        log.info("Получение события с userId: {}, с eventId: {}", userId, eventId);
         return eventService.getEventByIdByInitiator(eventId, userId);
     }
 
     @GetMapping("/{userId}/events")
+    @ResponseStatus(HttpStatus.OK)
     public List<EventShortDto> getEventsInitiatedByUser(
-            @PathVariable("userId")
-            final Long userId,
-            final PageParams pageParams
+            @PathVariable("userId") final Long userId,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {
-        log.info("Get events by userId: {}, pageParams: {}", userId, pageParams);
-        return eventService.getEventsInitiatedByUser(userId, pageParams);
+        log.info("Получение событий пользователя");
+        return eventService.getEventsInitiatedByUser(userId, from, size);
     }
 }

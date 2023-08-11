@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
-import ru.practicum.mainservice.dto.request.ParticipationRequestDto;
-import ru.practicum.mainservice.entity.Request;
+import ru.practicum.mainservice.dto.request.RequestDto;
+import ru.practicum.mainservice.model.Request;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RequestMapper {
@@ -13,5 +13,5 @@ public interface RequestMapper {
 
     @Mapping(target = "event", source = "request.event.id")
     @Mapping(target = "requester", source = "request.requester.id")
-    ParticipationRequestDto toDto(Request request);
+    RequestDto toDto(Request request);
 }

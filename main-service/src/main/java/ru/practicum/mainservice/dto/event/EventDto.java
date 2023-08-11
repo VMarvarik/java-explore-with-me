@@ -1,24 +1,22 @@
 package ru.practicum.mainservice.dto.event;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import ru.practicum.mainservice.dto.LocationDto;
+import lombok.Builder;
+import lombok.Data;
+import lombok.ToString;
 import ru.practicum.mainservice.dto.category.CategoryDto;
+import ru.practicum.mainservice.dto.location.LocationDto;
 import ru.practicum.mainservice.dto.user.UserShortDto;
-import ru.practicum.mainservice.entity.Event;
-import ru.practicum.mainservice.enums.EventState;
+import ru.practicum.mainservice.model.enums.EventState;
 
 import java.time.LocalDateTime;
 
-/**
- * Full DTO for {@link Event}
- */
 
 @AllArgsConstructor
-@Getter
-@Setter
-public class EventFullDto {
+@Data
+@ToString
+@Builder
+public class EventDto {
     private final Long id;
     private final String annotation;
     private final CategoryDto category;

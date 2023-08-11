@@ -1,17 +1,19 @@
-package ru.practicum.mainservice.entity;
+package ru.practicum.mainservice.model;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import ru.practicum.mainservice.enums.RequestStatus;
+import ru.practicum.mainservice.model.enums.RequestStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Builder
 @Entity
 @Table(name = "request")
 public class Request {

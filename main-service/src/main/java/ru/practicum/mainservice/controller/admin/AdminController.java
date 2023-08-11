@@ -1,4 +1,4 @@
-package ru.practicum.mainservice.controller;
+package ru.practicum.mainservice.controller.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,20 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainservice.dto.category.CategoryDto;
 import ru.practicum.mainservice.dto.category.NewCategoryDto;
 import ru.practicum.mainservice.dto.compilation.CompilationDto;
+import ru.practicum.mainservice.dto.compilation.CompilationUpdateDto;
 import ru.practicum.mainservice.dto.compilation.NewCompilationDto;
-import ru.practicum.mainservice.dto.compilation.UpdateCompilationDto;
-import ru.practicum.mainservice.dto.event.EventFullDto;
-import ru.practicum.mainservice.dto.event.UpdateEventAdminRequestDto;
-import ru.practicum.mainservice.dto.user.NewUserRequestDto;
+import ru.practicum.mainservice.dto.event.EventDto;
+import ru.practicum.mainservice.dto.event.EventUpdateRequestDto;
+import ru.practicum.mainservice.dto.user.NewUserDto;
 import ru.practicum.mainservice.dto.user.UserDto;
-import ru.practicum.mainservice.enums.EventState;
+import ru.practicum.mainservice.model.enums.EventState;
 import ru.practicum.mainservice.service.CategoryService;
 import ru.practicum.mainservice.service.CompilationService;
 import ru.practicum.mainservice.service.EventService;
 import ru.practicum.mainservice.service.UserService;
-import ru.practicum.mainservice.util.PageParams;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,101 +38,103 @@ public class AdminController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Valid @RequestBody NewUserRequestDto newUserRequestDto) {
-        log.info("Creating user: {}", newUserRequestDto);
-        return userService.createUser(newUserRequestDto);
+    public UserDto addUser(@Valid @RequestBody NewUserDto userDto) {
+        log.info("Создание пользователя: {}", userDto);
+        return userService.addUser(userDto);
     }
 
     @GetMapping("/users")
+    @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getAllUsers(
-            @RequestParam(required = false)
-            final List<Long> ids,
-            PageParams pageParams
+            @RequestParam(required = false) final List<Long> ids,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {
-        log.info("Getting all users with ids in: {}, page params: {}", ids, pageParams);
-        return userService.getAllUsers(ids, pageParams);
+        log.info("Вызов всех пользователей");
+        return userService.getAllUsers(ids, from, size);
     }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable final Long userId) {
-        log.info("Deleting user: {}", userId);
+        log.info("Удаление пользователя: {}", userId);
         userService.deleteUser(userId);
     }
 
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto createCategory(@Valid @RequestBody final NewCategoryDto newCategoryDto) {
-        log.info("Creating category: {}", newCategoryDto);
-        return categoryService.createCategory(newCategoryDto);
+    public CategoryDto addCategory(@Valid @RequestBody final NewCategoryDto newCategoryDto) {
+        log.info("Создание категории: {}", newCategoryDto);
+        return categoryService.addCategory(newCategoryDto);
     }
 
     @PatchMapping("/categories/{catId}")
+    @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCategory(
             @PathVariable
             final Long catId,
             @Valid @RequestBody
             final CategoryDto categoryDto
     ) {
-        log.info("Updating category id: {}, to: {}", catId, categoryDto);
+        log.info("Обновление категории: {}, to: {}", catId, categoryDto);
         return categoryService.updateCategory(catId, categoryDto);
     }
 
     @DeleteMapping("/categories/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable final Long catId) {
-        log.info("Deleting category with id: {}", catId);
+        log.info("Удаление категории: {}", catId);
         categoryService.deleteCategory(catId);
     }
 
     @PostMapping("/compilations")
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto createCompilation(@Valid @RequestBody final NewCompilationDto newCompilationDto) {
-        log.info("Creating new compilation: {}", newCompilationDto);
-        return compilationService.createCompilation(newCompilationDto);
+    public CompilationDto addCompilation(@Valid @RequestBody final NewCompilationDto newCompilationDto) {
+        log.info("Создание компиляции: {}", newCompilationDto);
+        return compilationService.addCompilation(newCompilationDto);
     }
 
     @PatchMapping("/compilations/{compId}")
+    @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(
-            @PathVariable
-            final Long compId,
-            @Valid @RequestBody final UpdateCompilationDto updateCompilationDto
+            @PathVariable final Long compId,
+            @Valid @RequestBody final CompilationUpdateDto updateCompilationDto
     ) {
-        log.info("Updating compilation with id: {}, to: {}", compId, updateCompilationDto);
+        log.info("Обновление компиляции с: {}, на: {}", compId, updateCompilationDto);
         return compilationService.updateCompilation(compId, updateCompilationDto);
     }
 
     @DeleteMapping("/compilations/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilation(@PathVariable final Long compId) {
-        log.info("Deleting compilation wirh id: {}", compId);
+        log.info("Удаление компиляции: {}", compId);
         compilationService.deleteCompilation(compId);
     }
 
     @PatchMapping("/events/{eventId}")
-    public EventFullDto updateEvent(
+    @ResponseStatus(HttpStatus.OK)
+    public EventDto updateEvent(
             @PathVariable final Long eventId,
-            @Valid @RequestBody final UpdateEventAdminRequestDto updater
+            @Valid @RequestBody final EventUpdateRequestDto requestDto
     ) {
-        log.info("Updating event by admin: {}, to: {}", eventId, updater);
-        return eventService.updateEventByAdmin(eventId, updater);
+        log.info("Обновление события с: {}, на: {}", eventId, requestDto);
+        return eventService.updateEventByAdmin(eventId, requestDto);
     }
 
     @GetMapping("/events")
-    public List<EventFullDto> getAllEvents(
+    @ResponseStatus(HttpStatus.OK)
+    public List<EventDto> getAllEvents(
             @RequestParam(required = false) final List<Long> users,
             @RequestParam(required = false) final List<Long> categories,
             @RequestParam(required = false) final List<EventState> states,
             @RequestParam(required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeStart,
             @RequestParam(required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-            final LocalDateTime rangeEnd,
-            PageParams pageParams
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {
-        log.info("Get events by admin with params:" +
-                        "users: {},\ncategories: {},\nstates: {},\nrangeStart:{},\nrangeEnd:{},\npageParams:{}",
-                users, categories, states, rangeStart, rangeEnd, pageParams);
-        return eventService.getAllEventsByAdmin(users, categories, states, rangeStart, rangeEnd, pageParams);
+        log.info("Вызов всех событий");
+        return eventService.getAllEventsByAdmin(users, categories, states, rangeStart, rangeEnd, from, size);
     }
 }

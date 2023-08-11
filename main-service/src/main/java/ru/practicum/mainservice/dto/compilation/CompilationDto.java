@@ -1,19 +1,21 @@
 package ru.practicum.mainservice.dto.compilation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 import ru.practicum.mainservice.dto.event.EventShortDto;
 
 import java.util.List;
 
-/**
- * Full DTO for {@link ru.practicum.mainservice.entity.Compilation}
- */
+@Data
+@ToString
+@Builder
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
 public class CompilationDto {
-    private final Long id;
-    private final Boolean pinned;
-    private final String title;
-    private final List<EventShortDto> events;
+    private List<EventShortDto> events;
+
+    private Long id;
+
+    private Boolean pinned;
+
+    private String title;
 }

@@ -2,14 +2,13 @@ package ru.practicum.mainservice.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainservice.dto.category.CategoryDto;
 import ru.practicum.mainservice.service.CategoryService;
-import ru.practicum.mainservice.util.PageParams;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,14 +19,17 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryDto> getAllCategories(PageParams pageParams) {
-        log.info("Getting all categories with page params: {}", pageParams);
-        return categoryService.getAllCategories(pageParams);
+    @ResponseStatus(HttpStatus.OK)
+    public List<CategoryDto> getAllCategories(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                              @RequestParam(name = "size", defaultValue = "10") @Positive Integer size) {
+        log.info("Вызов всех категорий");
+        return categoryService.getAllCategories(from, size);
     }
 
     @GetMapping("/{catId}")
+    @ResponseStatus(HttpStatus.OK)
     public CategoryDto getCategory(@PathVariable Long catId) {
-        log.info("Getting category with id: {}", catId);
-        return categoryService.getCategory(catId);
+        log.info("Вызов категории с id: {}", catId);
+        return categoryService.getCategoryById(catId);
     }
 }

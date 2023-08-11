@@ -2,11 +2,13 @@ package ru.practicum.mainservice.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.mainservice.dto.compilation.CompilationDto;
 import ru.practicum.mainservice.service.CompilationService;
-import ru.practicum.mainservice.util.PageParams;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @AllArgsConstructor
@@ -17,17 +19,20 @@ public class CompilationController {
     private final CompilationService compilationService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<CompilationDto> getCompilations(
             @RequestParam(required = false) Boolean pinned,
-            PageParams pageParams
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {
-        log.info("Get compilations with pinned={}, pageParams={}", pinned, pageParams);
-        return compilationService.getCompilations(pinned, pageParams);
+        log.info("Вызов всех компиляций");
+        return compilationService.getCompilations(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
+    @ResponseStatus(HttpStatus.OK)
     public CompilationDto getCompilationById(@PathVariable Long compId) {
-        log.info("Get compilation by id={}", compId);
+        log.info("Вызов компиляции с id={}", compId);
         return compilationService.getCompilationById(compId);
     }
 }

@@ -3,17 +3,17 @@ package ru.practicum.mainservice.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.mainservice.dto.EventConfirmedRequestDto;
+import ru.practicum.mainservice.dto.event.ConfirmedEventDto;
 import ru.practicum.mainservice.dto.event.EventShortDto;
-import ru.practicum.mainservice.entity.Event;
-import ru.practicum.mainservice.enums.RequestStatus;
 import ru.practicum.mainservice.mapper.EventMapper;
+import ru.practicum.mainservice.model.Event;
+import ru.practicum.mainservice.model.enums.RequestStatus;
 import ru.practicum.mainservice.repository.RequestRepository;
-import ru.practicum.mainservice.util.TimeManipulator;
 import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.ViewStatsDto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,15 +23,25 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class ServiceUtility {
+public class UtilityClass {
     private final RequestRepository requestRepository;
     private final StatClient statClient = new StatClient();
 
     private static final String START = "1970-01-01 00:00:00";
 
-    protected List<EventShortDto> makeEventShortDtos(Collection<Event> events) {
-        log.info("Calling stat client to get view stats");
-        Map<String, Long> viewStatsMap = makeViewStatsMap(events);
+    protected static final String USER_NOT_FOUND = "Пользователь не найден";
+    protected static final String CATEGORY_NOT_FOUND = "Категория не найдена";
+    protected static final String EVENT_NOT_FOUND = "Событие не найдено";
+    protected static final String COMPILATION_NOT_FOUND = "Компиляция не найдена";
+    protected static final String REQUEST_NOT_FOUND = "Запрос не найден";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static String formatTimeToString(LocalDateTime time) {
+        return time.format(formatter);
+    }
+
+    protected List<EventShortDto> makeEventShortDto(Collection<Event> events) {
+        Map<String, Long> viewStatsMap = toViewStats(events);
 
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
 
@@ -54,7 +64,7 @@ public class ServiceUtility {
         return eventsDto;
     }
 
-    protected Map<String, Long> makeViewStatsMap(Collection<Event> events) {
+    protected Map<String, Long> toViewStats(Collection<Event> events) {
         List<String> urisToSend = new ArrayList<>();
         for (Event event : events) {
             urisToSend.add(String.format("/events/%s", event.getId()));
@@ -62,7 +72,7 @@ public class ServiceUtility {
 
         List<ViewStatsDto> viewStats = statClient.getStats(
                 START,
-                TimeManipulator.formatTimeToString(LocalDateTime.now()),
+                formatTimeToString(LocalDateTime.now()),
                 urisToSend,
                 true
         );
@@ -75,11 +85,9 @@ public class ServiceUtility {
         List<Long> eventsIds = events.stream()
                 .map(Event::getId)
                 .collect(Collectors.toList());
-
-        log.info("Getting confirmed requests for events with ids: {}", eventsIds);
-        List<EventConfirmedRequestDto> confirmedRequestDtos =
+        List<ConfirmedEventDto> confirmedDtos =
                 requestRepository.countConfirmedRequests(eventsIds, RequestStatus.CONFIRMED);
-        return confirmedRequestDtos.stream()
-                .collect(Collectors.toMap(EventConfirmedRequestDto::getEventId, EventConfirmedRequestDto::getCount));
+        return confirmedDtos.stream()
+                .collect(Collectors.toMap(ConfirmedEventDto::getEventId, ConfirmedEventDto::getCount));
     }
 }

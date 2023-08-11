@@ -2,18 +2,20 @@ package ru.practicum.mainservice.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mainservice.dto.category.CategoryDto;
 import ru.practicum.mainservice.dto.category.NewCategoryDto;
-import ru.practicum.mainservice.entity.Category;
 import ru.practicum.mainservice.mapper.CategoryMapper;
+import ru.practicum.mainservice.model.Category;
 import ru.practicum.mainservice.repository.CategoryRepository;
-import ru.practicum.mainservice.util.PageParams;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.mainservice.service.UtilityClass.CATEGORY_NOT_FOUND;
 
 @AllArgsConstructor
 @Slf4j
@@ -22,57 +24,39 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        log.info("Mapping DTO: {} to entity", newCategoryDto);
-        Category category = CategoryMapper.INSTANCE.toEntity(newCategoryDto);
-        log.info("Saving entity: {} to DB and map to DTO", category);
+    public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
+        Category category = CategoryMapper.INSTANCE.toModel(newCategoryDto);
         return CategoryMapper.INSTANCE.toDto(categoryRepository.save(category));
     }
 
     @Transactional
-    public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
-        log.info("Checking if category with id {} exists", catId);
-        Category category = categoryRepository.findById(catId).orElseThrow(
-                () -> {
-                    log.warn("Category with id {} does not exists", catId);
-                    return new EntityNotFoundException("Category not found");
-                }
+    public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
+        Category category = categoryRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(CATEGORY_NOT_FOUND)
         );
-        log.info("Updating category={} with DTO: {}", category, categoryDto);
-        category = CategoryMapper.INSTANCE.partialUpdate(categoryDto, category);
-        log.info("Saving updated category={} to DB and map to DTO", category);
+        category = CategoryMapper.INSTANCE.forUpdate(categoryDto, category);
         return CategoryMapper.INSTANCE.toDto(categoryRepository.save(category));
     }
 
     @Transactional
-    public void deleteCategory(Long catId) {
-        log.info("Checking if category with id {} exists", catId);
-        if (!categoryRepository.existsById(catId)) {
-            log.warn("Category with id {} does not exists", catId);
-            throw new EntityNotFoundException("Category not found");
+    public void deleteCategory(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new EntityNotFoundException(CATEGORY_NOT_FOUND);
         }
-
-        log.info("Deleting category with id {} from DB", catId);
-        categoryRepository.deleteById(catId);
+        categoryRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public CategoryDto getCategory(Long catId) {
-        log.info("Checking if category with id {} exists", catId);
-        Category category = categoryRepository.findById(catId).orElseThrow(
-                () -> {
-                    log.warn("Category with id {} does not exists", catId);
-                    return new EntityNotFoundException("Category not found");
-                }
+    public CategoryDto getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(CATEGORY_NOT_FOUND)
         );
-        log.info("Mapping category={} to DTO", category);
         return CategoryMapper.INSTANCE.toDto(category);
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryDto> getAllCategories(PageParams pageParams) {
-        List<Category> categories = categoryRepository.findAll(pageParams.makePageRequest()).getContent();
-        log.info("Mapping categories {} to DTO", categories.size());
+    public List<CategoryDto> getAllCategories(Integer from, Integer size) {
+        List<Category> categories = categoryRepository.findAll(PageRequest.of(from, size)).getContent();
         return categories.stream().map(CategoryMapper.INSTANCE::toDto).collect(Collectors.toList());
     }
 }
