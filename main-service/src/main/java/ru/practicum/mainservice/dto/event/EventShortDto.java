@@ -1,6 +1,5 @@
 package ru.practicum.mainservice.dto.event;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.mainservice.dto.category.CategoryDto;
 import ru.practicum.mainservice.dto.user.UserShortDto;
@@ -8,11 +7,6 @@ import ru.practicum.mainservice.dto.user.UserShortDto;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.practicum.mainservice.dto.category.CategoryDto;
-import ru.practicum.mainservice.dto.user.UserShortDto;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Data

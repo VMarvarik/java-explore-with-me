@@ -3,7 +3,6 @@ package ru.practicum.mainservice.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import ru.practicum.mainservice.model.enums.RequestStatus;
 
 import javax.validation.constraints.NotNull;

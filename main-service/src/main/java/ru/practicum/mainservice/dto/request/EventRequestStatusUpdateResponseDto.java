@@ -1,7 +1,6 @@
 package ru.practicum.mainservice.dto.request;
 
 import lombok.*;
-import ru.practicum.mainservice.dto.request.RequestDto;
 
 import java.util.List;
 
