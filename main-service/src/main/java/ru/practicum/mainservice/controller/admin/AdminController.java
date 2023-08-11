@@ -91,7 +91,7 @@ public class AdminController {
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto addCompilation(@Valid @RequestBody final NewCompilationDto newCompilationDto) {
         log.info("Создание компиляции: {}", newCompilationDto);
-        return compilationService.addCompilation(newCompilationDto);
+        return compilationService.createCompilation(newCompilationDto);
     }
 
     @PatchMapping("/compilations/{compId}")
