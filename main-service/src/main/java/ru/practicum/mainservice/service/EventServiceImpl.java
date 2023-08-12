@@ -118,7 +118,7 @@ public class EventServiceImpl implements EventService {
             event.setState(newState);
         }
         event = EventMapper.INSTANCE.forUpdate(updater, newCategory, newState, event);
-        return EventMapper.INSTANCE.toDto(eventRepository.save(event), 0L, 0L);
+        return EventMapper.INSTANCE.toDto(event, 0L, 0L);
     }
 
     @Transactional
@@ -164,7 +164,7 @@ public class EventServiceImpl implements EventService {
             }
         }
         event = EventMapper.INSTANCE.forUpdate(updateEventDto, newCategory, newState, event);
-        return EventMapper.INSTANCE.toDto(eventRepository.save(event), 0L, 0L);
+        return EventMapper.INSTANCE.toDto(event, 0L, 0L);
     }
 
     @Transactional(readOnly = true)
