@@ -131,7 +131,6 @@ public class RequestServiceImpl implements RequestService {
                 throw new DataException("В событии уже максимальное кол-во участников");
             }
             List<Request> requests = requestRepository.findAllByIdIn(updater.getRequestIds());
-
             RequestStatus newStatus = updater.getStatus();
             for (Request request : requests) {
                 if (request.getEvent().getId().equals(eventId)) {
@@ -147,13 +146,13 @@ public class RequestServiceImpl implements RequestService {
                     throw new DataException("Запрос и событие не совпадают");
                 }
             }
-            requestRepository.saveAll(requests);
-            requests = requestRepository.findAllByEventId(eventId);
-            List<RequestDto> confirmedRequests = requests.stream()
+            requests = requestRepository.saveAll(requests);
+            List<Request> updatedRequests = requestRepository.findAllByEventId(eventId);
+            List<RequestDto> confirmedRequests = updatedRequests.stream()
                     .filter(request -> request.getStatus() == RequestStatus.CONFIRMED)
                     .map(RequestMapper.INSTANCE::toDto)
                     .collect(Collectors.toList());
-            List<RequestDto> rejectedRequests = requests.stream()
+            List<RequestDto> rejectedRequests = updatedRequests.stream()
                     .filter(request -> request.getStatus() == RequestStatus.REJECTED)
                     .map(RequestMapper.INSTANCE::toDto)
                     .collect(Collectors.toList());
