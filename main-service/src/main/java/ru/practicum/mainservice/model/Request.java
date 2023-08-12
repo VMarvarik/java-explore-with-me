@@ -26,7 +26,6 @@ public class Request {
     @Column(name = "created")
     private LocalDateTime created;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
     private Event event;

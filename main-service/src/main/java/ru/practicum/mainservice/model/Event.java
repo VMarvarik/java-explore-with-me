@@ -29,12 +29,10 @@ public class Event {
     @Column(name = "annotation")
     private String annotation;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @NotNull
     @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;
 
