@@ -20,7 +20,7 @@ import static ru.practicum.mainservice.service.UtilityClass.USER_NOT_FOUND;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class UserService {
+public class UserServiceImpl {
     private final UserRepository userRepository;
 
     @Transactional

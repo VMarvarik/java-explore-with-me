@@ -11,8 +11,8 @@ import ru.practicum.mainservice.dto.event.NewEventDto;
 import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateRequestDto;
 import ru.practicum.mainservice.dto.request.EventRequestStatusUpdateResponseDto;
 import ru.practicum.mainservice.dto.request.RequestDto;
-import ru.practicum.mainservice.service.EventService;
-import ru.practicum.mainservice.service.RequestService;
+import ru.practicum.mainservice.service.interfaces.EventService;
+import ru.practicum.mainservice.service.interfaces.RequestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

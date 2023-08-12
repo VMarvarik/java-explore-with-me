@@ -17,6 +17,7 @@ import ru.practicum.mainservice.model.enums.RequestStatus;
 import ru.practicum.mainservice.repository.EventRepository;
 import ru.practicum.mainservice.repository.RequestRepository;
 import ru.practicum.mainservice.repository.UserRepository;
+import ru.practicum.mainservice.service.interfaces.RequestService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -28,7 +29,7 @@ import static ru.practicum.mainservice.service.UtilityClass.*;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class RequestService {
+public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;

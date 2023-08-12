@@ -19,6 +19,7 @@ import ru.practicum.mainservice.model.enums.EventState;
 import ru.practicum.mainservice.model.enums.RequestStatus;
 import ru.practicum.mainservice.model.enums.StateAction;
 import ru.practicum.mainservice.repository.*;
+import ru.practicum.mainservice.service.interfaces.EventService;
 import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.EndpointHitDto;
 import ru.practicum.statdto.ViewStatsDto;
@@ -36,7 +37,7 @@ import static ru.practicum.mainservice.service.UtilityClass.*;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class EventService {
+public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
@@ -117,7 +118,7 @@ public class EventService {
             event.setState(newState);
         }
         event = EventMapper.INSTANCE.forUpdate(updater, newCategory, newState, event);
-        return EventMapper.INSTANCE.toDto(eventRepository.save(event), 0L, 0L);
+        return EventMapper.INSTANCE.toDto(event, 0L, 0L);
     }
 
     @Transactional
@@ -163,7 +164,7 @@ public class EventService {
             }
         }
         event = EventMapper.INSTANCE.forUpdate(updateEventDto, newCategory, newState, event);
-        return EventMapper.INSTANCE.toDto(eventRepository.save(event), 0L, 0L);
+        return EventMapper.INSTANCE.toDto(event, 0L, 0L);
     }
 
     @Transactional(readOnly = true)

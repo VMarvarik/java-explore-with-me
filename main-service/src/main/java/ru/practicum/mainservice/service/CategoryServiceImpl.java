@@ -10,6 +10,7 @@ import ru.practicum.mainservice.dto.category.NewCategoryDto;
 import ru.practicum.mainservice.mapper.CategoryMapper;
 import ru.practicum.mainservice.model.Category;
 import ru.practicum.mainservice.repository.CategoryRepository;
+import ru.practicum.mainservice.service.interfaces.CategoryService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -20,7 +21,7 @@ import static ru.practicum.mainservice.service.UtilityClass.CATEGORY_NOT_FOUND;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class CategoryService {
+public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
@@ -34,8 +35,8 @@ public class CategoryService {
         Category category = categoryRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(CATEGORY_NOT_FOUND)
         );
-        category = CategoryMapper.INSTANCE.forUpdate(categoryDto, category);
-        return CategoryMapper.INSTANCE.toDto(categoryRepository.save(category));
+        CategoryMapper.INSTANCE.forUpdate(categoryDto, category);
+        return CategoryMapper.INSTANCE.toDto(category);
     }
 
     @Transactional

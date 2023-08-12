@@ -15,10 +15,10 @@ import ru.practicum.mainservice.dto.event.EventUpdateRequestDto;
 import ru.practicum.mainservice.dto.user.NewUserDto;
 import ru.practicum.mainservice.dto.user.UserDto;
 import ru.practicum.mainservice.model.enums.EventState;
-import ru.practicum.mainservice.service.CategoryService;
-import ru.practicum.mainservice.service.CompilationService;
-import ru.practicum.mainservice.service.EventService;
-import ru.practicum.mainservice.service.UserService;
+import ru.practicum.mainservice.service.interfaces.CategoryService;
+import ru.practicum.mainservice.service.interfaces.CompilationService;
+import ru.practicum.mainservice.service.interfaces.EventService;
+import ru.practicum.mainservice.service.interfaces.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

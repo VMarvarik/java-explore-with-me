@@ -14,6 +14,7 @@ import ru.practicum.mainservice.model.Compilation;
 import ru.practicum.mainservice.model.Event;
 import ru.practicum.mainservice.repository.CompilationRepository;
 import ru.practicum.mainservice.repository.EventRepository;
+import ru.practicum.mainservice.service.interfaces.CompilationService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
@@ -24,7 +25,7 @@ import static ru.practicum.mainservice.service.UtilityClass.COMPILATION_NOT_FOUN
 @AllArgsConstructor
 @Slf4j
 @Service
-public class CompilationService {
+public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
     private final UtilityClass serviceUtility;
@@ -61,8 +62,6 @@ public class CompilationService {
             compilation.setEvents(new HashSet<>(events));
         }
         compilation = CompilationMapper.INSTANCE.forUpdate(updateCompilationDto, compilation);
-
-        compilation = compilationRepository.save(compilation);
         List<EventShortDto> eventsDto = serviceUtility.makeEventShortDto(compilation.getEvents());
         return CompilationMapper.INSTANCE.toDto(compilation, eventsDto);
     }
