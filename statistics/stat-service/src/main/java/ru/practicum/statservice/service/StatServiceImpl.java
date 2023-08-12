@@ -19,11 +19,13 @@ import java.util.List;
 public class StatServiceImpl implements StatService {
     private final StatRepository repository;
 
+    private final HitMapper hitMapper;
+
     @Transactional
     @Override
     public void addHit(EndpointHitDto hitDto) {
         log.trace("Сохранение хит: {}", hitDto);
-        repository.save(HitMapper.toHitModel(hitDto));
+        repository.save(hitMapper.INSTANCE.toHitModel(hitDto));
     }
 
     @Override

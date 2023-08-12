@@ -1,20 +1,15 @@
 package ru.practicum.statservice.model;
 
-import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.statdto.EndpointHitDto;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+@Mapper
+public interface HitMapper {
+    HitMapper INSTANCE = Mappers.getMapper(HitMapper.class);
 
-@Slf4j
-public class HitMapper {
-    public static EndpointHit toHitModel(EndpointHitDto endpointHitDto) {
-        return new EndpointHit(
-                null,
-                endpointHitDto.getApp(),
-                endpointHitDto.getUri(),
-                endpointHitDto.getIp(),
-                LocalDateTime.parse(endpointHitDto.getTimestamp(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        );
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "timestamp", target = "timestamp", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    EndpointHit toHitModel(EndpointHitDto endpointHitDto);
 }
