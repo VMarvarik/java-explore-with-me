@@ -2,14 +2,23 @@ package ru.practicum.statservice.model;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.statdto.EndpointHitDto;
 
-@Mapper
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Mapper(componentModel = "spring")
 public interface HitMapper {
     HitMapper INSTANCE = Mappers.getMapper(HitMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "timestamp", target = "timestamp", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(target = "created", source = "timestamp", qualifiedByName = "stringToLocalDateTime")
     EndpointHit toHitModel(EndpointHitDto endpointHitDto);
+
+    @Named("stringToLocalDateTime")
+    default LocalDateTime stringToLocalDateTime(String timestamp) {
+        return LocalDateTime.parse(timestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
 }
