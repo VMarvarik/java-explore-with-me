@@ -2,6 +2,7 @@ package ru.practicum.mainservice.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,8 +30,10 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static ru.practicum.mainservice.service.UtilityClass.*;
 
@@ -241,21 +244,18 @@ public class EventServiceImpl implements EventService {
         if (onlyAvailable != null && onlyAvailable) {
             spec = spec.and(byParticipantLimit());
         }
+
         PageRequest pageRequest = PageRequest.of(
                 from / size,
                 size,
-                Sort.by(Sort.Direction.DESC, "eventDate"));
-        List<Event> events = eventRepository.findAll(spec, pageRequest).getContent();
-        if (events.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<EventShortDto> eventShortDtos = utilityClass.makeEventShortDto(events);
-        if (Objects.equals(sort, "VIEWS")) {
-            eventShortDtos = eventShortDtos.stream()
-                    .sorted(Comparator.comparing(EventShortDto::getViews).reversed())
-                    .collect(Collectors.toList());
-        }
-        return eventShortDtos;
+                Sort.by(Sort.Direction.DESC, sort.equals("VIEWS") ? "views" : "eventDate")
+        );
+
+        Page<Event> eventPage = eventRepository.findAll(spec, pageRequest);
+
+        List<Event> events = eventPage.getContent();
+
+        return utilityClass.makeEventShortDto(events);
     }
 
     @Transactional(readOnly = true)
