@@ -110,50 +110,55 @@ public class RequestService {
             Long eventId,
             Long userId
     ) {
-        if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException(USER_NOT_FOUND);
-        }
-        Event event = eventRepository.findById(eventId).orElseThrow(
-                () -> new EntityNotFoundException(EVENT_NOT_FOUND)
-        );
-        if (!event.getInitiator().getId().equals(userId)) {
-            throw new DataException("Пользователь не может обновлять запросы к событию, автором которого он не является");
-        }
-        Integer participantLimit = event.getParticipantLimit();
-        if (!event.getRequestModeration() || participantLimit == 0) {
-            throw new DataException("Событию не нужна модерация");
-        }
-        Long numberOfParticipants = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-        if (numberOfParticipants >= participantLimit) {
-            throw new DataException("В событии уже максимальное кол-во участников");
-        }
-        List<Request> requests = requestRepository.findAllByIdIn(updater.getRequestIds());
-
-        RequestStatus newStatus = updater.getStatus();
-        for (Request request : requests) {
-            if (request.getEvent().getId().equals(eventId)) {
-                if (participantLimit > numberOfParticipants) {
-                    if (newStatus == RequestStatus.CONFIRMED && request.getStatus() != RequestStatus.CONFIRMED) {
-                        numberOfParticipants++;
-                    }
-                    request.setStatus(newStatus);
-                } else {
-                    request.setStatus(RequestStatus.REJECTED);
-                }
-            } else {
-                throw new DataException("Запрос и событие не совпадают");
+        RequestStatus status = updater.getStatus();
+        if (status == RequestStatus.CONFIRMED || status == RequestStatus.REJECTED) {
+            if (!userRepository.existsById(userId)) {
+                throw new EntityNotFoundException(USER_NOT_FOUND);
             }
+            Event event = eventRepository.findById(eventId).orElseThrow(
+                    () -> new EntityNotFoundException(EVENT_NOT_FOUND)
+            );
+            if (!event.getInitiator().getId().equals(userId)) {
+                throw new DataException("Пользователь не может обновлять запросы к событию, автором которого он не является");
+            }
+            Integer participantLimit = event.getParticipantLimit();
+            if (!event.getRequestModeration() || participantLimit == 0) {
+                throw new DataException("Событию не нужна модерация");
+            }
+            Long numberOfParticipants = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+            if (numberOfParticipants >= participantLimit) {
+                throw new DataException("В событии уже максимальное кол-во участников");
+            }
+            List<Request> requests = requestRepository.findAllByIdIn(updater.getRequestIds());
+
+            RequestStatus newStatus = updater.getStatus();
+            for (Request request : requests) {
+                if (request.getEvent().getId().equals(eventId)) {
+                    if (participantLimit > numberOfParticipants) {
+                        if (newStatus == RequestStatus.CONFIRMED && request.getStatus() != RequestStatus.CONFIRMED) {
+                            numberOfParticipants++;
+                        }
+                        request.setStatus(newStatus);
+                    } else {
+                        request.setStatus(RequestStatus.REJECTED);
+                    }
+                } else {
+                    throw new DataException("Запрос и событие не совпадают");
+                }
+            }
+            requestRepository.saveAll(requests);
+            requests = requestRepository.findAllByEventId(eventId);
+            List<RequestDto> confirmedRequests = requests.stream()
+                    .filter(request -> request.getStatus() == RequestStatus.CONFIRMED)
+                    .map(RequestMapper.INSTANCE::toDto)
+                    .collect(Collectors.toList());
+            List<RequestDto> rejectedRequests = requests.stream()
+                    .filter(request -> request.getStatus() == RequestStatus.REJECTED)
+                    .map(RequestMapper.INSTANCE::toDto)
+                    .collect(Collectors.toList());
+            return new EventRequestStatusUpdateResponseDto(confirmedRequests, rejectedRequests);
+        } else {
+            throw new IllegalArgumentException("Доступны только статусы CONFIRMED или REJECTED");
         }
-        requestRepository.saveAll(requests);
-        requests = requestRepository.findAllByEventId(eventId);
-        List<RequestDto> confirmedRequests = requests.stream()
-                .filter(request -> request.getStatus() == RequestStatus.CONFIRMED)
-                .map(RequestMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
-        List<RequestDto> rejectedRequests = requests.stream()
-                .filter(request -> request.getStatus() == RequestStatus.REJECTED)
-                .map(RequestMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
-        return new EventRequestStatusUpdateResponseDto(confirmedRequests, rejectedRequests);
     }
 }

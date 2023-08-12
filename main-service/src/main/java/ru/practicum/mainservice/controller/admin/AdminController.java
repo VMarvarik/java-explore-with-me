@@ -46,7 +46,7 @@ public class AdminController {
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getAllUsers(
-            @RequestParam(required = false) final List<Long> ids,
+            @RequestParam(required = false) List<Long> ids,
             @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {
@@ -56,14 +56,14 @@ public class AdminController {
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable final Long userId) {
+    public void deleteUser(@PathVariable Long userId) {
         log.info("Удаление пользователя: {}", userId);
         userService.deleteUser(userId);
     }
 
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto addCategory(@Valid @RequestBody final NewCategoryDto newCategoryDto) {
+    public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
         log.info("Создание категории: {}", newCategoryDto);
         return categoryService.addCategory(newCategoryDto);
     }
@@ -72,9 +72,9 @@ public class AdminController {
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCategory(
             @PathVariable
-            final Long catId,
+            Long catId,
             @Valid @RequestBody
-            final CategoryDto categoryDto
+            CategoryDto categoryDto
     ) {
         log.info("Обновление категории: {}, to: {}", catId, categoryDto);
         return categoryService.updateCategory(catId, categoryDto);
@@ -82,14 +82,14 @@ public class AdminController {
 
     @DeleteMapping("/categories/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable final Long catId) {
+    public void deleteCategory(@PathVariable Long catId) {
         log.info("Удаление категории: {}", catId);
         categoryService.deleteCategory(catId);
     }
 
     @PostMapping("/compilations")
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto addCompilation(@Valid @RequestBody final NewCompilationDto newCompilationDto) {
+    public CompilationDto addCompilation(@Valid @RequestBody NewCompilationDto newCompilationDto) {
         log.info("Создание компиляции: {}", newCompilationDto);
         return compilationService.addCompilation(newCompilationDto);
     }
@@ -97,8 +97,8 @@ public class AdminController {
     @PatchMapping("/compilations/{compId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(
-            @PathVariable final Long compId,
-            @Valid @RequestBody final CompilationUpdateDto updateCompilationDto
+            @PathVariable Long compId,
+            @Valid @RequestBody CompilationUpdateDto updateCompilationDto
     ) {
         log.info("Обновление компиляции с: {}, на: {}", compId, updateCompilationDto);
         return compilationService.updateCompilation(compId, updateCompilationDto);
@@ -106,7 +106,7 @@ public class AdminController {
 
     @DeleteMapping("/compilations/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCompilation(@PathVariable final Long compId) {
+    public void deleteCompilation(@PathVariable Long compId) {
         log.info("Удаление компиляции: {}", compId);
         compilationService.deleteCompilation(compId);
     }
@@ -114,8 +114,8 @@ public class AdminController {
     @PatchMapping("/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventDto updateEvent(
-            @PathVariable final Long eventId,
-            @Valid @RequestBody final EventUpdateRequestDto requestDto
+            @PathVariable Long eventId,
+            @Valid @RequestBody EventUpdateRequestDto requestDto
     ) {
         log.info("Обновление события с: {}, на: {}", eventId, requestDto);
         return eventService.updateEventByAdmin(eventId, requestDto);
@@ -124,13 +124,13 @@ public class AdminController {
     @GetMapping("/events")
     @ResponseStatus(HttpStatus.OK)
     public List<EventDto> getAllEvents(
-            @RequestParam(required = false) final List<Long> users,
-            @RequestParam(required = false) final List<Long> categories,
-            @RequestParam(required = false) final List<EventState> states,
+            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(required = false) List<EventState> states,
             @RequestParam(required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeStart,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
             @RequestParam(required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
             @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(name = "size", defaultValue = "10") @Positive Integer size
     ) {

@@ -49,7 +49,13 @@ public class EventService {
     private static final String APP = "ewm-main-service";
 
     @Transactional
-    public EventDto createEvent(Long userId, NewEventDto newEventDto) {
+    public EventDto addEvent(Long userId, NewEventDto newEventDto) {
+        LocalDateTime eventDate = newEventDto.getEventDate();
+        LocalDateTime timeCriteria = LocalDateTime.now().plusHours(2L);
+        if (eventDate.isBefore(timeCriteria)) {
+            throw new DataException("Время события не может таким ранним");
+        }
+
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(USER_NOT_FOUND)
         );
@@ -116,6 +122,11 @@ public class EventService {
 
     @Transactional
     public EventDto updateEventByUser(EventUpdateRequestDto updateEventDto, Long eventId, Long userId) {
+        LocalDateTime eventDate = updateEventDto.getEventDate();
+        LocalDateTime timeCriteria = LocalDateTime.now().plusHours(2L);
+        if (eventDate != null && eventDate.isBefore(timeCriteria)) {
+            throw new DataException("Время события не может таким ранним");
+        }
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException(EVENT_NOT_FOUND)
         );
