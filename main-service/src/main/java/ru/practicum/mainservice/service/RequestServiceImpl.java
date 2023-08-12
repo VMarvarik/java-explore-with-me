@@ -147,16 +147,17 @@ public class RequestServiceImpl implements RequestService {
                 }
             }
             requests = requestRepository.saveAll(requests);
-            List<Request> updatedRequests = requestRepository.findAllByEventId(eventId);
-            List<RequestDto> confirmedRequests = updatedRequests.stream()
-                    .filter(request -> request.getStatus() == RequestStatus.CONFIRMED)
+            List<Request> confirmedRequests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+            List<Request> rejectedRequests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.REJECTED);
+
+            List<RequestDto> confirmedRequestDtos = confirmedRequests.stream()
                     .map(RequestMapper.INSTANCE::toDto)
                     .collect(Collectors.toList());
-            List<RequestDto> rejectedRequests = updatedRequests.stream()
-                    .filter(request -> request.getStatus() == RequestStatus.REJECTED)
+
+            List<RequestDto> rejectedRequestDtos = rejectedRequests.stream()
                     .map(RequestMapper.INSTANCE::toDto)
                     .collect(Collectors.toList());
-            return new EventRequestStatusUpdateResponseDto(confirmedRequests, rejectedRequests);
+            return new EventRequestStatusUpdateResponseDto(confirmedRequestDtos, rejectedRequestDtos);
         } else {
             throw new IllegalArgumentException("Доступны только статусы CONFIRMED или REJECTED");
         }

@@ -31,4 +31,6 @@ public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpec
             "AND r.status = :status " +
             "GROUP BY r.event.id")
     List<ConfirmedEventDto> countConfirmedRequests(List<Long> eventIds, RequestStatus status);
+
+    List<Request> findAllByEventIdAndStatus(Long eventId, RequestStatus status);
 }
