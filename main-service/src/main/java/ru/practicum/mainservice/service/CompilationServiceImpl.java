@@ -56,17 +56,22 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(
                 () -> new EntityNotFoundException(COMPILATION_NOT_FOUND)
         );
+
         Set<Long> eventsIds = updateCompilationDto.getEvents();
         if (eventsIds != null) {
             List<Event> events = eventRepository.findAllById(eventsIds);
             compilation.setEvents(new HashSet<>(events));
         }
-        compilation = CompilationMapper.INSTANCE.forUpdate(updateCompilationDto, compilation);
 
-        compilation = compilationRepository.save(compilation);
+        CompilationMapper.INSTANCE.forUpdate(updateCompilationDto, compilation);
+
         List<EventShortDto> eventsDto = serviceUtility.makeEventShortDto(compilation.getEvents());
+
+        Set<Event> updatedEvents = compilationRepository.save(compilation).getEvents();
+
         return CompilationMapper.INSTANCE.toDto(compilation, eventsDto);
     }
+
 
     @Transactional(readOnly = true)
     public CompilationDto getCompilationById(Long compId) {
