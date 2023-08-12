@@ -40,7 +40,7 @@ public class Request {
     @Enumerated(value = EnumType.STRING)
     private RequestStatus status;
 
-    public  Request(Event event, User requester, RequestStatus status) {
+    public Request(Event event, User requester, RequestStatus status) {
         this.id = null;
         this.created = LocalDateTime.now();
         this.event = event;

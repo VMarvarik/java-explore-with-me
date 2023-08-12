@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -20,11 +20,11 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "name")
     private String name;
 
-    @NotNull
+    @NotBlank
     @Column(name = "email", unique = true)
     private String email;
 }

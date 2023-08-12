@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class Category {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "name")
     private String name;
 }

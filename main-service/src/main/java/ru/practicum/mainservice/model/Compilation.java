@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class Compilation {
     @Column(name = "pinned")
     private Boolean pinned = false;
 
-    @NotNull
+    @NotBlank
     @Column(name = "title")
     private String title;
 

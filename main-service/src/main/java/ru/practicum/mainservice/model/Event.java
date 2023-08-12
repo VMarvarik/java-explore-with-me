@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.mainservice.model.enums.EventState;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -25,7 +26,7 @@ public class Event {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "annotation")
     private String annotation;
 
@@ -36,7 +37,7 @@ public class Event {
     @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;
 
-    @NotNull
+    @NotBlank
     @Column(name = "description")
     private String description;
 
@@ -72,7 +73,7 @@ public class Event {
     @Enumerated(value = EnumType.STRING)
     private EventState state;
 
-    @NotNull
+    @NotBlank
     @Column(name = "title")
     private String title;
 
