@@ -10,6 +10,7 @@ import ru.practicum.mainservice.dto.user.UserDto;
 import ru.practicum.mainservice.mapper.UserMapper;
 import ru.practicum.mainservice.model.User;
 import ru.practicum.mainservice.repository.UserRepository;
+import ru.practicum.mainservice.service.interfaces.UserService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -20,7 +21,7 @@ import static ru.practicum.mainservice.service.UtilityClass.USER_NOT_FOUND;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Transactional

@@ -62,6 +62,8 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setEvents(new HashSet<>(events));
         }
         compilation = CompilationMapper.INSTANCE.forUpdate(updateCompilationDto, compilation);
+
+        compilation = compilationRepository.save(compilation);
         List<EventShortDto> eventsDto = serviceUtility.makeEventShortDto(compilation.getEvents());
         return CompilationMapper.INSTANCE.toDto(compilation, eventsDto);
     }
