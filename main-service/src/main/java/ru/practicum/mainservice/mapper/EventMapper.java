@@ -17,6 +17,7 @@ public interface EventMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "compilations", ignore = true)
+    @Mapping(target = "comments", ignore = true)
     @Mapping(target = "category", source = "category")
     @Mapping(target = "initiator", source = "user")
     Event toModel(NewEventDto newEventDto, User user, Category category);
@@ -32,6 +33,7 @@ public interface EventMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "compilations", ignore = true)
+    @Mapping(target = "comments", ignore = true)
     @Mapping(target = "category", source = "newCategory")
     @Mapping(target = "initiator", ignore = true)
     @Mapping(target = "state", source = "newState")

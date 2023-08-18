@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import ru.practicum.mainservice.dto.category.CategoryDto;
+import ru.practicum.mainservice.dto.comment.CommentDto;
 import ru.practicum.mainservice.dto.location.LocationDto;
 import ru.practicum.mainservice.dto.user.UserShortDto;
 import ru.practicum.mainservice.model.enums.EventState;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @AllArgsConstructor
@@ -33,4 +35,5 @@ public class EventDto {
     private final EventState state;
     private final String title;
     private final Long views;
+    private Set<CommentDto> comments;
 }

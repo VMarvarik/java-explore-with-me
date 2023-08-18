@@ -34,6 +34,7 @@ public class UtilityClass {
     protected static final String EVENT_NOT_FOUND = "Событие не найдено";
     protected static final String COMPILATION_NOT_FOUND = "Компиляция не найдена";
     protected static final String REQUEST_NOT_FOUND = "Запрос не найден";
+    protected static final String COMMENT_NOT_FOUND = "Комментарий не найден";
 
     public static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
