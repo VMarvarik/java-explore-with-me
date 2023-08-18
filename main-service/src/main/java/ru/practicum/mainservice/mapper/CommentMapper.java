@@ -14,16 +14,16 @@ public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
     @Mappings({
-            @Mapping(target = "event", source = "comment.event.id"),
-            @Mapping(target = "author", source = "comment.author.id")
+            @Mapping(target = "event", source = "event"),
+            @Mapping(target = "author", source = "author")
     })
     CommentDto toDto(Comment comment);
 
     @Mappings({
-            @Mapping(target = "text", source = "commentDto.text"),
-            @Mapping(target = "author", expression = "java(User.builder().id(userId).build())"),
-            @Mapping(target = "event", expression = "java(Event.builder().id(eventId).build())"),
-            @Mapping(target = "createdOn", expression = "java(java.time.LocalDateTime.now())")
+            @Mapping(target = "text", source = "text"),
+            @Mapping(target = "author", expression = "author"),
+            @Mapping(target = "event", expression = "event"),
+            @Mapping(target = "createdOn", expression = "createdOn")
     })
     Comment fromDto(CommentDto commentDto, Long userId, Long eventId);
 
