@@ -38,7 +38,8 @@ public class CommentServiceImpl implements CommentService {
     private final EventRepository eventRepository;
     private final RequestService requestService;
 
-    private final CommentMapper commentMapper;
+    //private final CommentMapper commentMapper;
+
 
     @Override
     @Transactional
@@ -70,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
         if (foundComment.isPresent()) {
             throw new AccessDeniedException("Можно оставить только один комменатрий");
         }
-        return commentMapper.toDto(commentRepository.save(commentMapper.fromDto(commentDto, userId, eventId)));
+        return CommentMapper.toDto(commentRepository.save(CommentMapper.fromDto(commentDto, userId, eventId)));
     }
 
     @Override
@@ -105,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment savedComment = commentRepository.save(foundComment);
-        return commentMapper.toDto(savedComment);
+        return CommentMapper.toDto(savedComment);
     }
 
     public List<CommentDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size) {
@@ -116,7 +117,7 @@ public class CommentServiceImpl implements CommentService {
         PageRequest pageRequest = PageRequest.of(from, size);
         List<Comment> comments = commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId, pageRequest);
 
-        return commentMapper.toDtos(comments);
+        return CommentMapper.toDtos(comments);
     }
 
     public List<CommentDto> getLast10CommentsByEventId(Long eventId) {
@@ -124,7 +125,7 @@ public class CommentServiceImpl implements CommentService {
                 () -> new EntityNotFoundException(EVENT_NOT_FOUND)
         );
         List<Comment> comments = commentRepository.findTop10ByEventIdOrderByCreatedOnDesc(eventId);
-        return commentMapper.toDtos(comments);
+        return CommentMapper.toDtos(comments);
     }
 
     private void checkIfUserIsTheAuthor(Long authorId, Long userId) {
