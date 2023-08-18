@@ -24,10 +24,12 @@ public interface EventMapper {
 
     @Mapping(target = "confirmedRequests", source = "confirmedRequests")
     @Mapping(target = "views", source = "views")
+    @Mapping(target = "comments", ignore = true)
     EventDto toDto(Event event, Long confirmedRequests, Long views);
 
     @Mapping(target = "confirmedRequests", source = "confirmedRequests")
     @Mapping(target = "views", source = "views")
+    @Mapping(target = "comments", ignore = true)
     EventShortDto toShortDto(Event event, Long confirmedRequests, Long views);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
