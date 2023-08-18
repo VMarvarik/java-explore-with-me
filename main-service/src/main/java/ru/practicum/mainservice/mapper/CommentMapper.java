@@ -1,39 +1,31 @@
 package ru.practicum.mainservice.mapper;
 
-import lombok.experimental.UtilityClass;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.mainservice.dto.comment.CommentDto;
 import ru.practicum.mainservice.model.Comment;
-import ru.practicum.mainservice.model.Event;
-import ru.practicum.mainservice.model.User;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@UtilityClass
-public class CommentMapper {
-    public CommentDto toDto(Comment comment) {
-        return CommentDto.builder()
-                .id(comment.getId())
-                .createdOn(comment.getCreatedOn())
-                .event(comment.getEvent().getId())
-                .text(comment.getText())
-                .author(comment.getAuthor().getId())
-                .build();
-    }
+@Mapper
+public interface CommentMapper {
+    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    public Comment fromDto(CommentDto commentDto, Long userId, Long eventId) {
-        return Comment.builder()
-                .text(commentDto.getText())
-                .author(User.builder().id(userId).build())
-                .event(Event.builder().id(eventId).build())
-                .createdOn(LocalDateTime.now())
-                .build();
-    }
+    @Mappings({
+            @Mapping(target = "event", source = "comment.event.id"),
+            @Mapping(target = "author", source = "comment.author.id")
+    })
+    CommentDto toDto(Comment comment);
 
-    public List<CommentDto> toDtos(List<Comment> comments) {
-        return comments.stream()
-                .map(CommentMapper::toDto)
-                .collect(Collectors.toList());
-    }
+    @Mappings({
+            @Mapping(target = "text", source = "commentDto.text"),
+            @Mapping(target = "author", expression = "java(User.builder().id(userId).build())"),
+            @Mapping(target = "event", expression = "java(Event.builder().id(eventId).build())"),
+            @Mapping(target = "createdOn", expression = "java(java.time.LocalDateTime.now())")
+    })
+    Comment fromDto(CommentDto commentDto, Long userId, Long eventId);
+
+    List<CommentDto> toDtos(List<Comment> comments);
 }
