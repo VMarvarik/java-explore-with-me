@@ -1,62 +1,41 @@
-version: '3.1'
+version: '3.3'
 services:
   stats-server:
-    build: ./stats-service/stats-server
-    image: stats_service_image
-    container_name: stats_service
-    depends_on:
-      - stats-db
+    build: statistics/
     ports:
       - "9090:9090"
+    depends_on:
+      - stats-db
     environment:
-      - STATS_DRIVER=org.postgresql.Driver
-      - STATS_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
-      - STATS_DB=stats
-      - STATS_DB_USER=postgres
-      - STATS_DB_PASSWORD=root
-      - PORT=9090
+      SPRING_DATASOURCE_URL: jdbc:postgresql://stats-db:5432/stats
+      SPRING_DATASOURCE_USERNAME: stats
+      SPRING_DATASOURCE_PASSWORD: stats
 
   stats-db:
-    image: postgres:14-alpine
-    container_name: stats_db
-    volumes:
-      - stats-data:/var/lib/postgres
+    image: postgres:15.3-alpine3.18
     ports:
-      - "5432:5432"
+      - "6541:5432"
     environment:
-      - POSTGRES_DB=stats
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
+      POSTGRES_USER: stats
+      POSTGRES_PASSWORD: stats
 
   ewm-service:
-    build: ./main-service
-    image: ewm_service_image
-    container_name: ewm_service
-    depends_on:
-      - ewm-db
+    build: main-service/
     ports:
       - "8080:8080"
+    depends_on:
+      - ewm-db
+      - stats-server
     environment:
-      - EWM_DRIVER=org.postgresql.Driver
-      - EWM_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
-      - EWM_DB=ewm
-      - EWM_DB_USER=postgres
-      - EWM_DB_PASSWORD=root
-      - PORT=8080
-      - STAT_SERVER_URL=http://stats-server:9090
+      MAIN_SPRING_DATASOURCE_URL: jdbc:postgresql://ewm-db:5432/main_user
+      MAIN_SPRING_DATASOURCE_USERNAME: main_user
+      MAIN_SPRING_DATASOURCE_PASSWORD: main_user
+      STATS_SERVER_URL: http://stats-server:9090
 
   ewm-db:
-    image: postgres:14-alpine
-    container_name: ewm_db
-    volumes:
-      - ewm-data:/var/lib/postgres
+    image: postgres:15.3-alpine3.18
     ports:
-      - "5433:5433"
+      - "6543:5432"
     environment:
-      - POSTGRES_DB=ewm
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-
-volumes:
-  stats-data:
-  ewm-data:
+      POSTGRES_USER: main_user
+      POSTGRES_PASSWORD: main_user
