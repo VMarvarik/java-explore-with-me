@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.exception.DataAccessException;
 import ru.practicum.mainservice.exception.DataException;
 import ru.practicum.mainservice.mapper.CommentMapper;
 import ru.practicum.mainservice.model.Comment;
@@ -59,11 +60,11 @@ public class CommentServiceImpl implements CommentService {
             requests.stream()
                     .filter(request -> request.getRequester().getId().equals(userId))
                     .findFirst()
-                    .orElseThrow(() -> new DataException("Вы не учавствовали в событии или не являетесь автором события"));
+                    .orElseThrow(() -> new DataAccessException("Вы не учавствовали в событии или не являетесь автором события"));
         }
         Optional<Comment> foundComment = commentRepository.findByEventIdAndAuthorId(eventId, userId);
         if (foundComment.isPresent()) {
-            throw new DataException("Можно оставить только один комментарий");
+            throw new DataAccessException("Можно оставить только один комментарий");
         }
         return CommentMapper.INSTANCE.toDto(commentRepository.save(CommentMapper.INSTANCE.fromDto(commentDto, userId, eventId)));
     }
@@ -120,7 +121,7 @@ public class CommentServiceImpl implements CommentService {
 
     private void checkIfUserIsTheAuthor(Long authorId, Long userId) {
         if (!Objects.equals(authorId, userId)) {
-            throw new DataException("Пользовтель не является автором комментария");
+            throw new DataAccessException("Пользовтель не является автором комментария");
         }
     }
 
