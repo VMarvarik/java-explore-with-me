@@ -35,6 +35,7 @@ public class UtilityClass {
     protected static final String COMPILATION_NOT_FOUND = "Компиляция не найдена";
     protected static final String REQUEST_NOT_FOUND = "Запрос не найден";
 
+    //тест коммит
     public static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
 
