@@ -26,7 +26,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCommentById(@PathVariable Long userId,
                                   @PathVariable Long commentId) {
         log.info("Удаление комментария пользователем");

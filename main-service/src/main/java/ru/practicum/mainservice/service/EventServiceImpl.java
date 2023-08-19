@@ -123,7 +123,7 @@ public class EventServiceImpl implements EventService {
             event.setState(newState);
         }
         event = EventMapper.INSTANCE.forUpdate(updater, newCategory, newState, event);
-        List<CommentDto> comments = CommentMapper.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+        List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
         return EventMapper.INSTANCE.toDto(event, 0L, 0L, comments);
     }
 
@@ -170,7 +170,7 @@ public class EventServiceImpl implements EventService {
             }
         }
         event = EventMapper.INSTANCE.forUpdate(updateEventDto, newCategory, newState, event);
-        List<CommentDto> comments = CommentMapper.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+        List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
         return EventMapper.INSTANCE.toDto(event, 0L, 0L, comments);
     }
 
@@ -188,7 +188,7 @@ public class EventServiceImpl implements EventService {
         }
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
         Long views = getViewsForOneEvent(eventId);
-        List<CommentDto> comments = CommentMapper.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+        List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
         return EventMapper.INSTANCE.toDto(event, confirmedRequests, views, comments);
     }
 
@@ -208,7 +208,7 @@ public class EventServiceImpl implements EventService {
                 formatTimeToString(LocalDateTime.now())
         ));
         Long views = getViewsForOneEvent(eventId);
-        List<CommentDto> comments = CommentMapper.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+        List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
         return EventMapper.INSTANCE.toDto(event, confirmedRequests, views, comments);
     }
 
@@ -338,7 +338,7 @@ public class EventServiceImpl implements EventService {
             if (views == null) {
                 views = 0L;
             }
-            List<CommentDto> comments = CommentMapper.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+            List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
             eventsDto.add(
                     EventMapper.INSTANCE.toDto(event, reqCount, views, comments)
             );

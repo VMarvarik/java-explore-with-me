@@ -64,7 +64,7 @@ public class UtilityClass {
             if (views == null) {
                 views = 0L;
             }
-            List<CommentDto> comments = CommentMapper.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+            List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
             eventsDto.add(
                     EventMapper.INSTANCE.toShortDto(event, reqCount, views, comments)
             );

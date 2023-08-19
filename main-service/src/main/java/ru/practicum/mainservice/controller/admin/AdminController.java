@@ -138,7 +138,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/comments/{commentId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCommentByAdmin(@PathVariable Long commentId) {
         log.info("Удаление комментария администратором");
         commentService.deleteCommentByAdmin(commentId);

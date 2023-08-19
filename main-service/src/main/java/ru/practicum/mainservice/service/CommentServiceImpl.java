@@ -1,24 +1,24 @@
 package ru.practicum.mainservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.practicum.mainservice.dto.comment.CommentDto;
-import ru.practicum.mainservice.dto.request.RequestDto;
-import ru.practicum.mainservice.exception.DataAccessException;
 import ru.practicum.mainservice.exception.DataException;
 import ru.practicum.mainservice.mapper.CommentMapper;
 import ru.practicum.mainservice.model.Comment;
 import ru.practicum.mainservice.model.Event;
+import ru.practicum.mainservice.model.Request;
 import ru.practicum.mainservice.model.User;
 import ru.practicum.mainservice.model.enums.EventState;
 import ru.practicum.mainservice.model.enums.RequestStatus;
 import ru.practicum.mainservice.repository.CommentRepository;
 import ru.practicum.mainservice.repository.EventRepository;
+import ru.practicum.mainservice.repository.RequestRepository;
 import ru.practicum.mainservice.repository.UserRepository;
 import ru.practicum.mainservice.service.interfaces.CommentService;
-import ru.practicum.mainservice.service.interfaces.RequestService;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -30,15 +30,14 @@ import static ru.practicum.mainservice.service.UtilityClass.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     private final UserRepository userRepository;
 
     private final EventRepository eventRepository;
-    private final RequestService requestService;
-
-    //private final CommentMapper commentMapper;
+    private final RequestRepository requestRepository;
 
 
     @Override
@@ -51,27 +50,22 @@ public class CommentServiceImpl implements CommentService {
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException(EVENT_NOT_FOUND)
         );
-
         if (event.getState() != EventState.PUBLISHED) {
             throw new DataException("Событие еще не опубликовано");
         }
 
-        List<RequestDto> requests = requestService.getAllUserRequests(userId);
-
-        requests.stream().filter(requestDto -> requestDto.getStatus() == RequestStatus.CONFIRMED
-                && !requestDto.getEvent().equals(eventId)).findAny().orElseThrow(()
-                -> new EntityNotFoundException("REQUEST_NOT_FOUND"));
-
         if (!Objects.equals(user.getId(), event.getInitiator().getId())) {
-            throw new DataAccessException("Пользователь не учавствовал в событии");
+            List<Request> requests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+            requests.stream()
+                    .filter(request -> request.getRequester().getId().equals(userId))
+                    .findFirst()
+                    .orElseThrow(() -> new DataException("Вы не учавствовали в событии или не являетесь автором события"));
         }
-
         Optional<Comment> foundComment = commentRepository.findByEventIdAndAuthorId(eventId, userId);
-
         if (foundComment.isPresent()) {
-            throw new DataAccessException("Можно оставить только один комменатрий");
+            throw new DataException("Можно оставить только один комментарий");
         }
-        return CommentMapper.toDto(commentRepository.save(CommentMapper.fromDto(commentDto, userId, eventId)));
+        return CommentMapper.INSTANCE.toDto(commentRepository.save(CommentMapper.INSTANCE.fromDto(commentDto, userId, eventId)));
     }
 
     @Override
@@ -80,9 +74,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException(COMMENT_NOT_FOUND)
         );
-
         checkIfUserIsTheAuthor(comment.getAuthor().getId(), userId);
-
         commentRepository.deleteById(commentId);
     }
 
@@ -104,9 +96,7 @@ public class CommentServiceImpl implements CommentService {
         if (StringUtils.hasLength(newText)) {
             foundComment.setText(newText);
         }
-
-        Comment savedComment = commentRepository.save(foundComment);
-        return CommentMapper.toDto(savedComment);
+        return CommentMapper.INSTANCE.toDto(foundComment);
     }
 
     public List<CommentDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size) {
@@ -117,7 +107,7 @@ public class CommentServiceImpl implements CommentService {
         PageRequest pageRequest = PageRequest.of(from, size);
         List<Comment> comments = commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId, pageRequest);
 
-        return CommentMapper.toDtos(comments);
+        return CommentMapper.INSTANCE.toDtos(comments);
     }
 
     public List<CommentDto> getLast10CommentsByEventId(Long eventId) {
@@ -125,12 +115,12 @@ public class CommentServiceImpl implements CommentService {
                 () -> new EntityNotFoundException(EVENT_NOT_FOUND)
         );
         List<Comment> comments = commentRepository.findTop10ByEventIdOrderByCreatedOnDesc(eventId);
-        return CommentMapper.toDtos(comments);
+        return CommentMapper.INSTANCE.toDtos(comments);
     }
 
     private void checkIfUserIsTheAuthor(Long authorId, Long userId) {
         if (!Objects.equals(authorId, userId)) {
-            throw new DataAccessException("Пользовтель не является автором комментария");
+            throw new DataException("Пользовтель не является автором комментария");
         }
     }
 
