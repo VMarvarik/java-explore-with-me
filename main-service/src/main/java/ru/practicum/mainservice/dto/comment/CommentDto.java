@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+import static ru.practicum.mainservice.service.UtilityClass.PATTERN;
+
 @Data
 @Builder
 @ToString
@@ -15,11 +17,13 @@ import java.time.LocalDateTime;
 public class CommentDto {
     private Long id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = PATTERN)
     private LocalDateTime createdOn;
 
+    @NotBlank
     private Long event;
 
+    @NotBlank
     private Long author;
 
     @Size(min = 10, max = 2000, message = "Размер комментария от 10 до 2000 символов")

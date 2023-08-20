@@ -32,7 +32,6 @@ public class AdminController {
     private final CategoryService categoryService;
     private final CompilationService compilationService;
     private final EventService eventService;
-
     private final CommentService commentService;
 
     @PostMapping("/users")

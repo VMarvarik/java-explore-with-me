@@ -16,14 +16,14 @@ import java.util.List;
 @ToString
 @Builder
 public class EventShortDto {
-    private final Long id;
-    private final String annotation;
-    private final CategoryDto category;
-    private final Long confirmedRequests;
-    private final LocalDateTime eventDate;
-    private final UserShortDto initiator;
-    private final Boolean paid;
-    private final String title;
-    private final Long views;
-    private final List<CommentDto> comments;
+    private Long id;
+    private String annotation;
+    private CategoryDto category;
+    private Long confirmedRequests;
+    private LocalDateTime eventDate;
+    private UserShortDto initiator;
+    private Boolean paid;
+    private String title;
+    private Long views;
+    private List<CommentDto> comments;
 }
