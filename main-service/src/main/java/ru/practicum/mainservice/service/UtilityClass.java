@@ -3,7 +3,7 @@ package ru.practicum.mainservice.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 import ru.practicum.mainservice.dto.event.ConfirmedEventDto;
 import ru.practicum.mainservice.dto.event.EventShortDto;
 import ru.practicum.mainservice.mapper.CommentMapper;
@@ -64,7 +64,7 @@ public class UtilityClass {
             if (views == null) {
                 views = 0L;
             }
-            List<CommentDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
+            List<CommentResponseDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
             eventsDto.add(
                     EventMapper.INSTANCE.toShortDto(event, reqCount, views, comments)
             );

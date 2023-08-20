@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentRequestDto;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 import ru.practicum.mainservice.service.interfaces.CommentService;
 
 import javax.validation.Valid;
@@ -18,9 +19,9 @@ public class CommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentDto addComment(@PathVariable Long userId,
-                                 @RequestParam Long eventId,
-                                 @Valid @RequestBody CommentDto commentDto) {
+    public CommentResponseDto addComment(@PathVariable Long userId,
+                                         @RequestParam Long eventId,
+                                         @Valid @RequestBody CommentRequestDto commentDto) {
         log.info("Добавление комментария пользователем");
         return commentService.addComment(userId, eventId, commentDto);
     }
@@ -35,9 +36,9 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto updateComment(@PathVariable Long userId,
-                                    @PathVariable Long commentId,
-                                    @Valid @RequestBody CommentDto commentDto) {
+    public CommentResponseDto updateComment(@PathVariable Long userId,
+                                            @PathVariable Long commentId,
+                                            @Valid @RequestBody CommentRequestDto commentDto) {
         log.info("Обновление комментария");
         return commentService.updateComment(commentId, userId, commentDto);
     }

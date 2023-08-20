@@ -1,21 +1,22 @@
 package ru.practicum.mainservice.service.interfaces;
 
 
-import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentRequestDto;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 
 import java.util.List;
 
 public interface CommentService {
-    CommentDto addComment(Long userId, Long eventId, CommentDto commentDto);
+    CommentResponseDto addComment(Long userId, Long eventId, CommentRequestDto commentDto);
 
-    CommentDto updateComment(Long commentId, Long userId, CommentDto commentDto);
+    CommentResponseDto updateComment(Long commentId, Long userId, CommentRequestDto commentDto);
 
     void deleteCommentById(Long commentId, Long userId);
 
     void deleteCommentByAdmin(Long commentId);
 
 
-    List<CommentDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size);
+    List<CommentResponseDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size);
 
-    List<CommentDto> getLast10CommentsByEventId(Long eventId);
+    List<CommentResponseDto> getLast10CommentsByEventId(Long eventId);
 }

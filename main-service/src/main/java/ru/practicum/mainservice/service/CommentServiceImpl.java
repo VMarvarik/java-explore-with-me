@@ -6,7 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentRequestDto;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 import ru.practicum.mainservice.exception.DataAccessException;
 import ru.practicum.mainservice.exception.DataException;
 import ru.practicum.mainservice.mapper.CommentMapper;
@@ -43,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto addComment(Long userId, Long eventId, CommentDto commentDto) {
+    public CommentResponseDto addComment(Long userId, Long eventId, CommentRequestDto commentDto) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> {
                     log.warn("Попытка добавить комментарий от несуществующего пользователя");
@@ -62,13 +63,12 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (!Objects.equals(user.getId(), event.getInitiator().getId())) {
-            List<Request> requests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-            requests.stream().filter(request -> request.getRequester().getId().equals(userId)).findFirst()
-                    .orElseThrow(() -> new DataAccessException("Вы не учавствовали в событии или не являетесь автором события"));
-//            if (requests.isEmpty()) {
-//                log.warn("Попытка добавить комментарий пользователем, который не имеет отношения к событию");
-//                throw new DataAccessException("Вы не учавствовали в событии или не являетесь автором события");
-//            }
+            List<Request> requests = requestRepository.
+                    findAllByEventIdAndStatusAndRequesterId(eventId, RequestStatus.CONFIRMED, userId);
+            if (requests.isEmpty()) {
+                log.warn("Попытка добавить комментарий пользователем, который не имеет отношения к событию");
+                throw new DataAccessException("Вы не учавствовали в событии или не являетесь автором события");
+            }
         }
         Optional<Comment> foundComment = commentRepository.findByEventIdAndAuthorId(eventId, userId);
         if (foundComment.isPresent()) {
@@ -94,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto updateComment(Long commentId, Long userId, CommentDto commentDto) {
+    public CommentResponseDto updateComment(Long commentId, Long userId, CommentRequestDto commentDto) {
         Comment foundComment = checkIfCommentExist(commentId);
 
         checkIfUserIsTheAuthor(foundComment.getAuthor().getId(), userId);
@@ -107,7 +107,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size) {
+    public List<CommentResponseDto> getAllCommentsByEventId(Long eventId, Integer from, Integer size) {
         eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException(EVENT_NOT_FOUND)
         );
@@ -119,7 +119,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto> getLast10CommentsByEventId(Long eventId) {
+    public List<CommentResponseDto> getLast10CommentsByEventId(Long eventId) {
         eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException(EVENT_NOT_FOUND)
         );

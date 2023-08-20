@@ -3,7 +3,8 @@ package ru.practicum.mainservice.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentRequestDto;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 import ru.practicum.mainservice.model.Comment;
 import ru.practicum.mainservice.model.Event;
 import ru.practicum.mainservice.model.User;
@@ -16,14 +17,14 @@ public interface CommentMapper {
 
     @Mapping(source = "event.id", target = "event")
     @Mapping(source = "author.id", target = "author")
-    CommentDto toDto(Comment comment);
+    CommentResponseDto toDto(Comment comment);
 
-    List<CommentDto> toDtos(List<Comment> comments);
+    List<CommentResponseDto> toDtos(List<Comment> comments);
 
     @Mapping(target = "event", expression = "java(eventFromId(eventId))")
     @Mapping(target = "author", expression = "java(userFromId(userId))")
     @Mapping(target = "createdOn", expression = "java(java.time.LocalDateTime.now())")
-    Comment fromDto(CommentDto commentDto, Long userId, Long eventId);
+    Comment fromDto(CommentRequestDto commentDto, Long userId, Long eventId);
 
     default Event eventFromId(Long eventId) {
         if (eventId == null) {

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import ru.practicum.mainservice.dto.category.CategoryDto;
-import ru.practicum.mainservice.dto.comment.CommentDto;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 import ru.practicum.mainservice.dto.location.LocationDto;
 import ru.practicum.mainservice.dto.user.UserShortDto;
 import ru.practicum.mainservice.model.enums.EventState;
@@ -35,5 +35,5 @@ public class EventDto {
     private EventState state;
     private String title;
     private Long views;
-    private List<CommentDto> comments;
+    private List<CommentResponseDto> comments;
 }

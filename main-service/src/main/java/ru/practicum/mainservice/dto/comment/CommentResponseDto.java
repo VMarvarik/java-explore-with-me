@@ -3,8 +3,7 @@ package ru.practicum.mainservice.dto.comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 import static ru.practicum.mainservice.service.UtilityClass.PATTERN;
@@ -14,19 +13,18 @@ import static ru.practicum.mainservice.service.UtilityClass.PATTERN;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDto {
+public class CommentResponseDto {
     private Long id;
 
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = PATTERN)
     private LocalDateTime createdOn;
 
-    @NotBlank
+    @NotNull
     private Long event;
 
-    @NotBlank
+    @NotNull
     private Long author;
 
-    @Size(min = 10, max = 2000, message = "Размер комментария от 10 до 2000 символов")
-    @NotBlank(message = "Комментарий не может быть пустым или отсутствовать")
     private String text;
 }
