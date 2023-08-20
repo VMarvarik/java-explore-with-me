@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (!Objects.equals(user.getId(), event.getInitiator().getId())) {
-            List<Request> requests = requestRepository.findAllByEventIdAndStatusAndRequesterId(eventId, RequestStatus.CONFIRMED, userId);
+            List<Request> requests = requestRepository.findAllByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
             if (requests.isEmpty()) {
                 log.warn("Попытка добавить комментарий пользователем, который не имеет отношения к событию");
                 throw new DataAccessException("Вы не учавствовали в событии или не являетесь автором события");
