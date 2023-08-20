@@ -32,5 +32,7 @@ public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpec
             "GROUP BY r.event.id")
     List<ConfirmedEventDto> countConfirmedRequests(List<Long> eventIds, RequestStatus status);
 
+    List<Request> findAllByEventIdAndStatus(Long eventId, RequestStatus status);
+
     List<Request> findAllByEventIdAndStatusAndRequesterId(Long eventId, RequestStatus status, Long requesterId);
 }
