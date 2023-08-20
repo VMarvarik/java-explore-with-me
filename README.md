@@ -1,4 +1,5 @@
 # java-explore-with-me
+Репозиторий проекта -https://github.com/VMarvarik/java-explore-with-me/tree/main 
 
 __Дипломный проект для курса Java-разработчик на Yandex Практикум.__
 
@@ -18,3 +19,7 @@ __Идея проекта:__ Свободное время — ценный ре
 - Lombok
 - PostgreSQL
 - Maven
+## БД главного сервиса
+![Untitled](https://github.com/VMarvarik/java-explore-with-me/assets/116740607/57f6e1ce-a575-4ade-ab91-3ed3091a25d3)
+## БД сервиса статистики
+![Untitled (1)](https://github.com/VMarvarik/java-explore-with-me/assets/116740607/d99e330a-8689-490e-9daf-a2473f48f796)
