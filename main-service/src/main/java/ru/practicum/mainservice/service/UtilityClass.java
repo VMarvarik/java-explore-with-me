@@ -3,11 +3,14 @@ package ru.practicum.mainservice.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.mainservice.dto.comment.CommentResponseDto;
 import ru.practicum.mainservice.dto.event.ConfirmedEventDto;
 import ru.practicum.mainservice.dto.event.EventShortDto;
+import ru.practicum.mainservice.mapper.CommentMapper;
 import ru.practicum.mainservice.mapper.EventMapper;
 import ru.practicum.mainservice.model.Event;
 import ru.practicum.mainservice.model.enums.RequestStatus;
+import ru.practicum.mainservice.repository.CommentRepository;
 import ru.practicum.mainservice.repository.RequestRepository;
 import ru.practicum.statclient.StatClient;
 import ru.practicum.statdto.ViewStatsDto;
@@ -25,6 +28,8 @@ import java.util.stream.Collectors;
 @Service
 public class UtilityClass {
     private final RequestRepository requestRepository;
+
+    protected static final String COMMENT_NOT_FOUND = "Комментарий не найден";
     private final StatClient statClient = new StatClient();
 
     private static final String START = "1970-01-01 00:00:00";
@@ -34,6 +39,7 @@ public class UtilityClass {
     protected static final String EVENT_NOT_FOUND = "Событие не найдено";
     protected static final String COMPILATION_NOT_FOUND = "Компиляция не найдена";
     protected static final String REQUEST_NOT_FOUND = "Запрос не найден";
+    private final CommentRepository commentRepository;
 
     public static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN);
@@ -58,8 +64,9 @@ public class UtilityClass {
             if (views == null) {
                 views = 0L;
             }
+            List<CommentResponseDto> comments = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventIdOrderByCreatedOnDesc(eventId));
             eventsDto.add(
-                    EventMapper.INSTANCE.toShortDto(event, reqCount, views)
+                    EventMapper.INSTANCE.toShortDto(event, reqCount, views, comments)
             );
         }
 

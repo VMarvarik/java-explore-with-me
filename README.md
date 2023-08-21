@@ -1,2 +1,25 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
+Репозиторий проекта -https://github.com/VMarvarik/java-explore-with-me/tree/main 
+
+__Дипломный проект для курса Java-разработчик на Yandex Практикум.__
+
+__Идея проекта:__ Свободное время — ценный ресурс. Ежедневно каждый планирует как его потратить — куда и с кем сходить.
+Сложнее всего в таком планировании поиск информации и переговоры. Нужно учесть много деталей: какие намечаются
+мероприятия,
+свободны ли в этот момент друзья, как всех пригласить и где собраться.
+Написанное приложение — афиша, в которой можно предложить какое-либо событие от выставки до похода в кино и собрать
+компанию для участия в нём.
+
+## Технологии
+
+- Java 11
+- Spring Boot
+- JPA
+- Hibernate
+- Lombok
+- PostgreSQL
+- Maven
+## БД главного сервиса
+![Untitled](https://github.com/VMarvarik/java-explore-with-me/assets/116740607/57f6e1ce-a575-4ade-ab91-3ed3091a25d3)
+## БД сервиса статистики
+![Untitled (1)](https://github.com/VMarvarik/java-explore-with-me/assets/116740607/d99e330a-8689-490e-9daf-a2473f48f796)

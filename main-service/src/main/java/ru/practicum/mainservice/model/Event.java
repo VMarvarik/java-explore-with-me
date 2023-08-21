@@ -30,11 +30,13 @@ public class Event {
     @Column(name = "annotation")
     private String annotation;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "created_on", nullable = false)
+    @NotNull
+    @Column(name = "created_on")
     private LocalDateTime createdOn;
 
     @NotBlank

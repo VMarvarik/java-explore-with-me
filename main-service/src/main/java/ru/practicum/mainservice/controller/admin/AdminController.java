@@ -15,10 +15,7 @@ import ru.practicum.mainservice.dto.event.EventUpdateRequestDto;
 import ru.practicum.mainservice.dto.user.NewUserDto;
 import ru.practicum.mainservice.dto.user.UserDto;
 import ru.practicum.mainservice.model.enums.EventState;
-import ru.practicum.mainservice.service.interfaces.CategoryService;
-import ru.practicum.mainservice.service.interfaces.CompilationService;
-import ru.practicum.mainservice.service.interfaces.EventService;
-import ru.practicum.mainservice.service.interfaces.UserService;
+import ru.practicum.mainservice.service.interfaces.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -35,6 +32,7 @@ public class AdminController {
     private final CategoryService categoryService;
     private final CompilationService compilationService;
     private final EventService eventService;
+    private final CommentService commentService;
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
@@ -136,5 +134,12 @@ public class AdminController {
     ) {
         log.info("Вызов всех событий");
         return eventService.getAllEventsByAdmin(users, categories, states, rangeStart, rangeEnd, from, size);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCommentByAdmin(@PathVariable Long commentId) {
+        log.info("Удаление комментария администратором");
+        commentService.deleteCommentByAdmin(commentId);
     }
 }
